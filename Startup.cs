@@ -94,6 +94,7 @@ namespace project
             }
             //建立資料庫的連接
             dbContext.Database.EnsureCreated();
+            
             //ROUT的東西
             app.UseRouting();
             //跨域

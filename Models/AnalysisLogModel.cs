@@ -13,7 +13,8 @@ namespace MyWebsite
         
         [ForeignKey("UserModel")]
         public string M_Id { get; set; }
-        
+        [ForeignKey("BeforeAnalysisLogModel")]
+        public string B_Id { get; set; }
         [Column(TypeName = "NvarChar(Max)")]
         public string Image { get; set; }
         
@@ -21,7 +22,7 @@ namespace MyWebsite
         public DateTime AnalysisTime { get; set; }
 
         public virtual UserModel TheUser  { get; set;}
-        
+        public virtual BeforeAnalysisLogModel TheBeforeAnalysisLogModel  { get; set;}
         public virtual ICollection<AnalysisStatusModel> AnalysisStatus { get; set; } 
     }
 }

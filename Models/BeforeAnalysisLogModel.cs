@@ -1,5 +1,6 @@
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,5 +15,8 @@ namespace MyWebsite
     public string RawImage { get; set; }
     [Column(TypeName = "DateTime")]
     public DateTime RawTime { get; set; }
+    public virtual ICollection<AnalysisLogModel> AnalysisLog { get; set; } 
+
+
     }
 }
