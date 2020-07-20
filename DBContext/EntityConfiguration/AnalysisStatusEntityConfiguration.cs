@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyWebsite;
 
-public class AnalysisStatusConfiguration : IEntityTypeConfiguration<AnalysisStatusModel>
+public class AnalysisStatusEntityConfiguration : IEntityTypeConfiguration<AnalysisStatusModel>
 {
     public void Configure(EntityTypeBuilder<AnalysisStatusModel> builder)
     {

@@ -19,11 +19,12 @@ namespace MyWebsite
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new AnalysisLogConfiguration());
-            modelBuilder.ApplyConfiguration(new StatusConfiguration());
-            modelBuilder.ApplyConfiguration(new AnalysisStatusConfiguration());
-
+            modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new AnalysisLogEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new StatusEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new AnalysisStatusEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new BeforeAnalysisLogEntityConfiguration());
+            
         }
 
 

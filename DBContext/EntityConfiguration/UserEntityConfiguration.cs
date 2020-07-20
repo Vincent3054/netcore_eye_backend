@@ -2,11 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyWebsite;
 
-public class UserConfiguration : IEntityTypeConfiguration<UserModel>
+public class UserEntityConfiguration : IEntityTypeConfiguration<UserModel>
 {
     public void Configure(EntityTypeBuilder<UserModel> builder)
     {
-	// builder.HasKey(o => o.OrderNumber);
-	// builder.Property(t => t.OrderDate);
+        builder.HasKey(p => p.M_Id); //主見
     }
 }
