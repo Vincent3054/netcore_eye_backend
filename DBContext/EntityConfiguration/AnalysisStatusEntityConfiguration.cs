@@ -6,7 +6,9 @@ public class AnalysisStatusEntityConfiguration : IEntityTypeConfiguration<Analys
 {
     public void Configure(EntityTypeBuilder<AnalysisStatusModel> builder)
     {
-        
+        modelBuilder.Entity<AnalysisStatusModel>() //非空值
+                    .IsRequired();
+                    
         builder.HasKey(p => p.AS_Id); //主見
 
 
@@ -18,5 +20,8 @@ public class AnalysisStatusEntityConfiguration : IEntityTypeConfiguration<Analys
                .WithMany(p=>p.AnalysisStatus)
                .HasForeignKey(p=>p.S_Id);
 
+        modelBuilder.Entity<StatusModel>().HasData( //Seed Data
+            new StatusModel { AS_Id = 1, A_Id=1,S_Id=1}
+        );
     }
 }
