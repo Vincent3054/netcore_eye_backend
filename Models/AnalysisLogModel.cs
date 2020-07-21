@@ -17,7 +17,7 @@ namespace MyWebsite
         public string M_Id { get; set; }
         [ForeignKey("BeforeAnalysisLogModel")]
         [Required]
-        public string B_Id { get; set; }
+        public Guid B_Id { get; set; }
         [Column(TypeName = "NvarChar(Max)")]
         public string Image { get; set; }
         

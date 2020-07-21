@@ -18,8 +18,10 @@ public class AnalysisLogEntityConfiguration : IEntityTypeConfiguration<AnalysisL
                .HasForeignKey(p=>p.B_Id);//外來鍵
         
         Guid A_Id = Guid.NewGuid();
+        Guid B_Id = Guid.NewGuid();
+
         builder.HasData( //Seed Data
-            new AnalysisLogModel { A_Id = A_Id, M_Id="1",B_Id="1",Image = "https://i.imgur.com/PuC21Ma.png",AnalysisTime=DateTime.Now }
+            new AnalysisLogModel { A_Id = A_Id, M_Id="1",B_Id=B_Id,Image = "https://i.imgur.com/PuC21Ma.png",AnalysisTime=DateTime.Now }
         );
                
     }
