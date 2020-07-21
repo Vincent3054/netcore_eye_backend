@@ -9,13 +9,16 @@ namespace MyWebsite
     {
     [Key]
     [Column(TypeName = "int")]
+    [Required]
     public int AS_Id { get; set; }
     
     [ForeignKey("AnalysisLogModel")]
+    [Required]
     public Guid A_Id { get; set; }
     public virtual AnalysisLogModel TheAnalysisLog  { get; set;}
 
     [ForeignKey("StatusModel")]
+    [Required]
     public string S_Id { get; set; }
     public virtual StatusModel TheStatus  { get; set;}
     }

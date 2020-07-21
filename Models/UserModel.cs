@@ -9,6 +9,7 @@ namespace MyWebsite
     {
         [Key]
         [Column(TypeName = "varchar(10)")]
+        [Required]
         public string M_Id { get; set; }
         [Column(TypeName = "varchar(100)")]
         public string Email { get; set; }

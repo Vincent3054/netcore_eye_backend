@@ -9,11 +9,14 @@ namespace MyWebsite
     {
         [Key]
         [Column(TypeName = "uniqueidentifier")]
+        [Required]
         public Guid A_Id { get; set; }
         
         [ForeignKey("UserModel")]
+        [Required]
         public string M_Id { get; set; }
         [ForeignKey("BeforeAnalysisLogModel")]
+        [Required]
         public string B_Id { get; set; }
         [Column(TypeName = "NvarChar(Max)")]
         public string Image { get; set; }

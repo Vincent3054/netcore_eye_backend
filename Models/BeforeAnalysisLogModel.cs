@@ -10,6 +10,7 @@ namespace MyWebsite
     {
     [Key]
     [Column(TypeName = "uniqueidentifier")]
+    [Required]
     public Guid B_Id { get; set; }
     [Column(TypeName = "NvarChar(Max)")]
     public string RawImage { get; set; }

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyWebsite;
@@ -5,12 +6,8 @@ using MyWebsite;
 public class AnalysisStatusEntityConfiguration : IEntityTypeConfiguration<AnalysisStatusModel>
 {
     public void Configure(EntityTypeBuilder<AnalysisStatusModel> builder)
-    {
-        modelBuilder.Entity<AnalysisStatusModel>() //非空值
-                    .IsRequired();
-                    
-        builder.HasKey(p => p.AS_Id); //主見
-
+    {          
+        builder.HasKey(p => p.AS_Id); //主鍵
 
         builder.HasOne(p=>p.TheAnalysisLog)//外來鍵的表 去
                .WithMany(p=>p.AnalysisStatus)//外來鍵的表 來
@@ -19,9 +16,11 @@ public class AnalysisStatusEntityConfiguration : IEntityTypeConfiguration<Analys
         builder.HasOne(p=>p.TheStatus)
                .WithMany(p=>p.AnalysisStatus)
                .HasForeignKey(p=>p.S_Id);
+        
+        Guid A_Id = Guid.NewGuid();
 
-        modelBuilder.Entity<StatusModel>().HasData( //Seed Data
-            new StatusModel { AS_Id = 1, A_Id=1,S_Id=1}
+        builder.HasData( //Seed Data
+            new AnalysisStatusModel { AS_Id = 1, A_Id=A_Id,S_Id="1"}
         );
     }
 }
