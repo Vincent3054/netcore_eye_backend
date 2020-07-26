@@ -7,21 +7,17 @@ namespace MyWebsite
 {
     public class AnalysisLogModel
     {
-        [Key]
-        [Column(TypeName = "uniqueidentifier")]
-        [Required]
-        public Guid A_Id { get; set; }
+        [Key,Column(TypeName = "varchar(10)"),Required]
+        public string A_Id { get; set; }
         
         [ForeignKey("UserModel")]
-        [Required]
         public string M_Id { get; set; }
         [ForeignKey("BeforeAnalysisLogModel")]
-        [Required]
-        public Guid B_Id { get; set; }
+        public string B_Id { get; set; }
         [Column(TypeName = "NvarChar(Max)")]
         public string Image { get; set; }
         
-        [Column(TypeName = "DateTime")]
+        [Column(TypeName = "datetime")]
         public DateTime AnalysisTime { get; set; }
 
         public virtual UserModel TheUser  { get; set;}

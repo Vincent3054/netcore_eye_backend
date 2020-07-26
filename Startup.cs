@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,6 +35,7 @@ namespace project
         //設定差件
         public void ConfigureServices(IServiceCollection services)
         {
+            
             //跨域設定
             services.AddCors(option =>
             option.AddPolicy("AnotherPolicy", builder =>
@@ -115,3 +116,4 @@ namespace project
         }
     }
 }
+//建構子

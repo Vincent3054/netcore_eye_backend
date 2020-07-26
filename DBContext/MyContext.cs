@@ -25,7 +25,7 @@ namespace MyWebsite
             modelBuilder.ApplyConfiguration(new AnalysisStatusEntityConfiguration());
             modelBuilder.ApplyConfiguration(new BeforeAnalysisLogEntityConfiguration());
             
-        }
+        }   
 
 
     }

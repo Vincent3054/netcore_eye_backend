@@ -11,9 +11,9 @@ namespace project.Migrations
                 name: "BeforeAnalysisLog",
                 columns: table => new
                 {
-                    B_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    B_Id = table.Column<string>(type: "varchar(10)", nullable: false),
                     RawImage = table.Column<string>(type: "NvarChar(Max)", nullable: true),
-                    RawTime = table.Column<DateTime>(type: "DateTime", nullable: false)
+                    RawTime = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,11 +53,11 @@ namespace project.Migrations
                 name: "AnalysisLog",
                 columns: table => new
                 {
-                    A_Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    M_Id = table.Column<string>(nullable: false),
-                    B_Id = table.Column<Guid>(nullable: false),
+                    A_Id = table.Column<string>(type: "varchar(10)", nullable: false),
+                    M_Id = table.Column<string>(nullable: true),
+                    B_Id = table.Column<string>(nullable: true),
                     Image = table.Column<string>(type: "NvarChar(Max)", nullable: true),
-                    AnalysisTime = table.Column<DateTime>(type: "DateTime", nullable: false)
+                    AnalysisTime = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,13 +67,13 @@ namespace project.Migrations
                         column: x => x.B_Id,
                         principalTable: "BeforeAnalysisLog",
                         principalColumn: "B_Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AnalysisLog_User_M_Id",
                         column: x => x.M_Id,
                         principalTable: "User",
                         principalColumn: "M_Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -82,8 +82,8 @@ namespace project.Migrations
                 {
                     AS_Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    A_Id = table.Column<Guid>(nullable: false),
-                    S_Id = table.Column<string>(nullable: false)
+                    A_Id = table.Column<string>(nullable: true),
+                    S_Id = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -93,19 +93,19 @@ namespace project.Migrations
                         column: x => x.A_Id,
                         principalTable: "AnalysisLog",
                         principalColumn: "A_Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AnalysisStatus_Status_S_Id",
                         column: x => x.S_Id,
                         principalTable: "Status",
                         principalColumn: "S_Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
                 table: "BeforeAnalysisLog",
                 columns: new[] { "B_Id", "RawImage", "RawTime" },
-                values: new object[] { new Guid("ac0f9021-299c-463c-89db-db8e35375756"), "https://i.imgur.com/cfeJ9j7.png", new DateTime(2020, 7, 21, 22, 6, 39, 864, DateTimeKind.Local).AddTicks(1463) });
+                values: new object[] { "1", "https://i.imgur.com/cfeJ9j7.png", new DateTime(2020, 7, 26, 15, 6, 53, 622, DateTimeKind.Local).AddTicks(1213) });
 
             migrationBuilder.InsertData(
                 table: "Status",
@@ -115,17 +115,17 @@ namespace project.Migrations
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "M_Id", "CreateTime", "Email", "Name", "Passsword", "Role" },
-                values: new object[] { "1", new DateTime(2020, 7, 21, 22, 6, 39, 850, DateTimeKind.Local).AddTicks(2896), "ok96305@gmail.com", "陳建成", "12345", true });
+                values: new object[] { "1", new DateTime(2020, 7, 26, 15, 6, 53, 610, DateTimeKind.Local).AddTicks(5737), "ok96305@gmail.com", "陳建成", "12345", true });
 
             migrationBuilder.InsertData(
                 table: "AnalysisLog",
                 columns: new[] { "A_Id", "AnalysisTime", "B_Id", "Image", "M_Id" },
-                values: new object[] { new Guid("a963eccd-97aa-42ce-ae27-6b85c4fa3ad6"), new DateTime(2020, 7, 21, 22, 6, 39, 861, DateTimeKind.Local).AddTicks(5791), new Guid("2f98319c-1039-4177-9556-bace55da0cb5"), "https://i.imgur.com/PuC21Ma.png", "1" });
+                values: new object[] { "1", new DateTime(2020, 7, 26, 15, 6, 53, 619, DateTimeKind.Local).AddTicks(8422), "1", "https://i.imgur.com/PuC21Ma.png", "1" });
 
             migrationBuilder.InsertData(
                 table: "AnalysisStatus",
                 columns: new[] { "AS_Id", "A_Id", "S_Id" },
-                values: new object[] { 1, new Guid("520c4a33-3dda-443f-a8be-f80c6ba01090"), "1" });
+                values: new object[] { 1, "1", "1" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnalysisLog_B_Id",

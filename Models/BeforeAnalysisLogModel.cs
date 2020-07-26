@@ -9,12 +9,14 @@ namespace MyWebsite
     public class BeforeAnalysisLogModel
     {
     [Key]
-    [Column(TypeName = "uniqueidentifier")]
+    [Column(TypeName = "varchar(10)")]
     [Required]
-    public Guid B_Id { get; set; }
+    public string B_Id { get; set; }
+
     [Column(TypeName = "NvarChar(Max)")]
     public string RawImage { get; set; }
-    [Column(TypeName = "DateTime")]
+    
+    [Column(TypeName = "datetime")]
     public DateTime RawTime { get; set; }
     public virtual ICollection<AnalysisLogModel> AnalysisLog { get; set; } 
 

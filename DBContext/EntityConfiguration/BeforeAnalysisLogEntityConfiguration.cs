@@ -8,10 +8,8 @@ public class BeforeAnalysisLogEntityConfiguration : IEntityTypeConfiguration<Bef
     public void Configure(EntityTypeBuilder<BeforeAnalysisLogModel> builder)
     {
         builder.HasKey(p => p.B_Id); //主鍵
-            
-        Guid B_Id = Guid.NewGuid();
         builder.HasData( //Seed Data
-            new BeforeAnalysisLogModel { B_Id = B_Id, RawImage="https://i.imgur.com/cfeJ9j7.png",RawTime=DateTime.Now}
+            new BeforeAnalysisLogModel { B_Id = "1", RawImage="https://i.imgur.com/cfeJ9j7.png",RawTime= DateTime.Now}
         );
     }
 }

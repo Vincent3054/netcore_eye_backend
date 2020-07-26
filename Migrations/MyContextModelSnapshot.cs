@@ -21,21 +21,19 @@ namespace project.Migrations
 
             modelBuilder.Entity("MyWebsite.AnalysisLogModel", b =>
                 {
-                    b.Property<Guid>("A_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("A_Id")
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("AnalysisTime")
-                        .HasColumnType("DateTime");
+                        .HasColumnType("datetime");
 
-                    b.Property<Guid>("B_Id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("B_Id")
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("Image")
                         .HasColumnType("NvarChar(Max)");
 
                     b.Property<string>("M_Id")
-                        .IsRequired()
                         .HasColumnType("varchar(10)");
 
                     b.HasKey("A_Id");
@@ -49,9 +47,9 @@ namespace project.Migrations
                     b.HasData(
                         new
                         {
-                            A_Id = new Guid("a963eccd-97aa-42ce-ae27-6b85c4fa3ad6"),
-                            AnalysisTime = new DateTime(2020, 7, 21, 22, 6, 39, 861, DateTimeKind.Local).AddTicks(5791),
-                            B_Id = new Guid("2f98319c-1039-4177-9556-bace55da0cb5"),
+                            A_Id = "1",
+                            AnalysisTime = new DateTime(2020, 7, 26, 15, 6, 53, 619, DateTimeKind.Local).AddTicks(8422),
+                            B_Id = "1",
                             Image = "https://i.imgur.com/PuC21Ma.png",
                             M_Id = "1"
                         });
@@ -64,11 +62,10 @@ namespace project.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<Guid>("A_Id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("A_Id")
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("S_Id")
-                        .IsRequired()
                         .HasColumnType("varchar(100)");
 
                     b.HasKey("AS_Id");
@@ -83,22 +80,21 @@ namespace project.Migrations
                         new
                         {
                             AS_Id = 1,
-                            A_Id = new Guid("520c4a33-3dda-443f-a8be-f80c6ba01090"),
+                            A_Id = "1",
                             S_Id = "1"
                         });
                 });
 
             modelBuilder.Entity("MyWebsite.BeforeAnalysisLogModel", b =>
                 {
-                    b.Property<Guid>("B_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("B_Id")
+                        .HasColumnType("varchar(10)");
 
                     b.Property<string>("RawImage")
                         .HasColumnType("NvarChar(Max)");
 
                     b.Property<DateTime>("RawTime")
-                        .HasColumnType("DateTime");
+                        .HasColumnType("datetime");
 
                     b.HasKey("B_Id");
 
@@ -107,9 +103,9 @@ namespace project.Migrations
                     b.HasData(
                         new
                         {
-                            B_Id = new Guid("ac0f9021-299c-463c-89db-db8e35375756"),
+                            B_Id = "1",
                             RawImage = "https://i.imgur.com/cfeJ9j7.png",
-                            RawTime = new DateTime(2020, 7, 21, 22, 6, 39, 864, DateTimeKind.Local).AddTicks(1463)
+                            RawTime = new DateTime(2020, 7, 26, 15, 6, 53, 622, DateTimeKind.Local).AddTicks(1213)
                         });
                 });
 
@@ -165,7 +161,7 @@ namespace project.Migrations
                         new
                         {
                             M_Id = "1",
-                            CreateTime = new DateTime(2020, 7, 21, 22, 6, 39, 850, DateTimeKind.Local).AddTicks(2896),
+                            CreateTime = new DateTime(2020, 7, 26, 15, 6, 53, 610, DateTimeKind.Local).AddTicks(5737),
                             Email = "ok96305@gmail.com",
                             Name = "陳建成",
                             Passsword = "12345",
@@ -177,30 +173,22 @@ namespace project.Migrations
                 {
                     b.HasOne("MyWebsite.BeforeAnalysisLogModel", "TheBeforeAnalysisLogModel")
                         .WithMany("AnalysisLog")
-                        .HasForeignKey("B_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("B_Id");
 
                     b.HasOne("MyWebsite.UserModel", "TheUser")
                         .WithMany("AnalysisLog")
-                        .HasForeignKey("M_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("M_Id");
                 });
 
             modelBuilder.Entity("MyWebsite.AnalysisStatusModel", b =>
                 {
                     b.HasOne("MyWebsite.AnalysisLogModel", "TheAnalysisLog")
                         .WithMany("AnalysisStatus")
-                        .HasForeignKey("A_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("A_Id");
 
                     b.HasOne("MyWebsite.StatusModel", "TheStatus")
                         .WithMany("AnalysisStatus")
-                        .HasForeignKey("S_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("S_Id");
                 });
 #pragma warning restore 612, 618
         }

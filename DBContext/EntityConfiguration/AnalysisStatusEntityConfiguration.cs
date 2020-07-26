@@ -16,11 +16,11 @@ public class AnalysisStatusEntityConfiguration : IEntityTypeConfiguration<Analys
         builder.HasOne(p=>p.TheStatus)
                .WithMany(p=>p.AnalysisStatus)
                .HasForeignKey(p=>p.S_Id);
-        
-        Guid A_Id = Guid.NewGuid();
+
+        AnalysisLogEntityConfiguration GuidAid = new AnalysisLogEntityConfiguration();
 
         builder.HasData( //Seed Data
-            new AnalysisStatusModel { AS_Id = 1, A_Id=A_Id,S_Id="1"}
+            new AnalysisStatusModel { AS_Id = 1, A_Id="1",S_Id="1"}
         );
     }
 }
