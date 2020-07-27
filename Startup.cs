@@ -44,7 +44,7 @@ namespace project
                        .AllowAnyHeader()/*設定允許所有作者要求標頭*/
                        .AllowAnyMethod();/*設定允許任何 HTTP(Get、post...) */
             }));
-
+            // services.Add.coped()
             //JWT設定   
             // STEP1: 設定用哪種方式驗證 HTTP Request 是否合法
             services

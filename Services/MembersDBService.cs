@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
-
+using MyWebsite;
 
 public class MembersDBService
 {    //建立與資料庫的連線字串    
@@ -14,10 +15,16 @@ public class MembersDBService
 
     private readonly SqlConnection conn = new SqlConnection(cnstr);
     
-    #region 註冊1    
+    #region 註冊1   
+ 
     //註冊新會員方法
-    public void Register(Members newMember)
+    public void Register()
     {
+        
+        Mapper.CreateMap<UserModel, UserViewModel>()
+        // var viewModel2 = Mapper.Map<List<UserViewModel>>(sql.Post.ToList());
+
+
         //將密碼Hash過        
         // newMember.Password = HashPassword(newMember.Password);
         //sql新增語法 //IsAdmin 預設為0        
@@ -49,8 +56,8 @@ public class MembersDBService
      public void Register(Member newMember)
         {
             //產生member_Id
-            newMember.Member_Id = GetGUID();
-            newMember.Password = HashPassword(newMember.Password);
+            // newMember.Member_Id = GetGUID();
+            // newMember.Password = HashPassword(newMember.Password);
             string sql = $@"INSERT INTO member  values('{newMember.Member_Id}','{newMember.Account}','{newMember.Name}','{newMember.Email}','{newMember.Password}','{newMember.AuthCode}','{newMember.Phone}','{newMember.Sex}')";
 
             try
