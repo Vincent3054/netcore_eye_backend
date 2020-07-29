@@ -6,11 +6,12 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyWebsite;
+using project.Resources;
 
 namespace project.Controllers
 {
     [ApiController]
-    [Route("[controller]")] //ur;名子
+    [Route("api/[controller]")] //ur;名子
     public class MembersController : ControllerBase
     {
         //連線字串 c=>s 才可以做連線
@@ -38,6 +39,7 @@ namespace project.Controllers
         public IActionResult Members(UserViewModel RegisterData){
     		// var user = this._svc.Get();
             // UserViewModel userViewModel =_mapper.Map<UserViewModel>(user);
+            
         }	     
 
        // POST: api/TodoItems
@@ -51,8 +53,49 @@ namespace project.Controllers
             // return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, todoItem);
         }
 
+        public async Task<ActionResult> GetUserAsync(UserResources user)
+        {
+            // UserModel user = new UserModel();
+            var userDTO =  this._mapper.Map<UserModel>(user);
+            bool a= await  this._MembersDBService.PostMember(userDTO);
+            if(a)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+            // return BadRequest();400 notfu
+            // var name = userDTO.Name; 
+            // var email = userDTO.Email; 
+            // return user;
+        }    
+        // private static List<UserModel> _users = new List<UserModel>();
 
-        
+         [HttpPost]
+        // public async Task<UserModel> PostAsync([FromBody]UserModel user)
+        // {
+        //     var result = new UserModel();
+        //     // user.Id = _users.Count() == 0 ? 1 : _users.Max(c => c.Id) + 1;
+        //     _users.Add(user);
+        //     result.Name = user.Name;
+        //     result.Email = user.Email;
+        //     result.Passsword = user.Passsword;
+        //     await MembersDBService.PostMember();
+        //     return result;
+        // }
+        public async Task<ActionResult> PostAsync([FromBody]UserModel user)
+        {
+            var result = new UserModel();
+            // user.Id = _users.Count() == 0 ? 1 : _users.Max(c => c.Id) + 1;
+            _users.Add(user);
+            result.Name = user.Name;
+            result.Email = user.Email;
+            result.Passsword = user.Passsword;
+            await MembersDBService.PostMember();
+            return result;
+        }
 
     }
 }

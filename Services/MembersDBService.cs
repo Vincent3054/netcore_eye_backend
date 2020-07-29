@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyWebsite;
 
@@ -15,26 +16,82 @@ public class MembersDBService
     public MembersDBService(MyContext Context)
     {
         this._myContext = Context; 
-
     }
 
     //註冊新會員方法
-    public async Task AddUser(string url)
+    // public async Task AddUser(string url)
+    // {
+    //     var User = new UserModel { Name = url };
+    //     await _myContext.User.AddAsync(User);
+    //     await _myContext.SaveChangesAsync();   
+    // }    
+    
+    public async Task<bool> PostMember(UserModel newMember)
     {
-        var User = new UserModel { Name = url };
-        await _myContext.User.AddAsync(User);
-        await _myContext.SaveChangesAsync();   
-    }    
-
-        public static async Task AddBlogAsync(string url)
+        try
         {
-            using (var context = new BloggingContext())
-            {
-                var blog = new Blog { Url = url };
-                context.Blogs.Add(blog);
-                await context.SaveChangesAsync();
-            }
+            //把沒有的補進去 new guid... 
+            //密碼 hash
+            //建立時間 ...
+            newMember.Name="123";
+            await _myContext.User.AddAsync(newMember);
+            await _myContext.SaveChangesAsync();  
+            return true;
         }
+        catch (DbUpdateException  e)
+        {
+            throw new DbUpdateException (e.Message.ToString());
+        }
+    }   
+    //FindIndex不用
+    //可能會用 select where (箭頭函示的寫法)
+    public async Task<List<UserModel>> GetMember()
+    {
+        try
+        {
+            
+            //email 方法傳進來
+            //非同步查詢符合的第一筆資料 orm efcored1 (lineq Where)
+            // return await  _myContext.User.Where.(p=>p.Email==email).firs.....+Async\
+
+            return await _myContext.User.ToListAsync(); //查全部
+        }
+        catch (DbUpdateException  e)
+        {
+            throw new DbUpdateException (e.Message.ToString());
+        }
+    }
+    public async Task DeleteMember(UserModel newMember)
+    {
+        try
+        {
+            _myContext.Model.Name
+            _myContext.Remove(newMember);
+            await _myContext.SaveChangesAsync();  
+            // return await _myContext.User.ToListAsync();
+        }
+        catch (DbUpdateException  e)
+        {
+            throw new DbUpdateException (e.Message.ToString());
+        }
+    }
+    public async Task<List<UserModel>> PutMember(UserModel newMember)
+    {
+        try
+        {
+            _myContext.Update(newMember);
+            await _myContext.SaveChangesAsync();  
+            return await _myContext.User.ToListAsync();
+        }
+        catch (DbUpdateException  e)
+        {
+            throw new DbUpdateException (e.Message.ToString());
+        }
+    }
+
+
+
+
     #region 註冊
     public void Register(UserViewModel newMember)
         {
