@@ -44,7 +44,6 @@ namespace project
                        .AllowAnyHeader()/*設定允許所有作者要求標頭*/
                        .AllowAnyMethod();/*設定允許任何 HTTP(Get、post...) */
             }));
-            // services.Add.coped()
             //JWT設定   
             // STEP1: 設定用哪種方式驗證 HTTP Request 是否合法
             services
@@ -82,7 +81,6 @@ namespace project
             services.AddSwaggerGen();
             //在研究
             services.AddAutoMapper(typeof(Startup));
-
         }
         //啟用差件(按照正確的順序)
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

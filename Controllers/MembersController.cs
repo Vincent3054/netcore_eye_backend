@@ -13,25 +13,16 @@ namespace project.Controllers
     [Route("[controller]")] //ur;名子
     public class MembersController : ControllerBase
     {
-
         //連線字串 c=>s 才可以做連線
-        // private static readonly string[] Summaries = new[]
-        // {
-        //     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        // };
-
-        // private readonly ILogger<MembersController> _logger;
-        private readonly MyContext _svc;
+        private readonly MyContext _myContext;
         private readonly IMapper _mapper;
+        private readonly MembersDBService _MembersDBService;
 
-
-        public MembersController(MyContext svc,IMapper mapper) //建構子
+        public MembersController(IMapper mapper,MyContext Context) //建構子
         {
-            _svc = new svc(); //sercer也要用一個
-            
-            _mapper = mapper;
-
-
+            this._mapper = mapper;
+            this._myContext =  Context; //sercer也要用一個
+            this._MembersDBService=new MembersDBService(_myContext);
             //orm ??!!
             //建構子 裡面的東東 new會寫在這裡 (db)
             //map
@@ -44,46 +35,21 @@ namespace project.Controllers
         //orm寫法 s要用
         //c只做接收view傳來的東西 呼叫s去做運算 (c只做接收view的需求 和回傳view要得東西)
         //加密都在s處理
-        public IActionResult Members(){
+        public IActionResult Members(UserViewModel RegisterData){
     		// var user = this._svc.Get();
-            UserViewModel userViewModel =_mapper.Map<UserViewModel>(user);
+            // UserViewModel userViewModel =_mapper.Map<UserViewModel>(user);
+        }	     
 
-        }	
-//ado .net
-        public IEnumerable<WeatherForecast> Get()
+       // POST: api/TodoItems
+        [HttpPost]
+        public async Task<ActionResult<UserModel>> PostMembersController(UserModel RegisterData)
         {
+            _myContext.UserModel.Add(RegisterData);
+            await _context.SaveChangesAsync();
 
-            // var rng = new Random();
-            // return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            // {
-            //     Date = DateTime.Now.AddDays(index),
-            //     TemperatureC = rng.Next(-20, 55),
-            //     Summary = Summaries[rng.Next(Summaries.Length)]
-            // })
-            // .ToArray();
+            //return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
+            // return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, todoItem);
         }
-
-        //     public UserRequestModel Create(UserRequestModel user, string password)
-        //    {
-        //        // validation
-        //        if (string.IsNullOrWhiteSpace(password))
-        //            throw new AppException("Password is required");
-
-        //        if (_iUserRepository.Any(x => x.Email == user.Email))
-        //            throw new AppException("Email \"" + user.Email + "\" is already taken");
-
-        //        if (_iUserRepository.Any(x => x.UserName == user.UserName))
-        //            throw new AppException("Username \"" + user.UserName + "\" is already taken");
-
-        //        CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
-
-        //        user.PasswordHash = passwordHash;
-        //        user.PasswordSalt = passwordSalt;
-
-        //        _iUserRepository.Add(user);
-
-        //        return user;
-        //    }
 
 
         
