@@ -48,7 +48,7 @@ namespace project.Migrations
                         new
                         {
                             A_Id = "1",
-                            AnalysisTime = new DateTime(2020, 7, 26, 15, 6, 53, 619, DateTimeKind.Local).AddTicks(8422),
+                            AnalysisTime = new DateTime(2020, 7, 30, 21, 25, 30, 287, DateTimeKind.Local).AddTicks(5944),
                             B_Id = "1",
                             Image = "https://i.imgur.com/PuC21Ma.png",
                             M_Id = "1"
@@ -105,7 +105,7 @@ namespace project.Migrations
                         {
                             B_Id = "1",
                             RawImage = "https://i.imgur.com/cfeJ9j7.png",
-                            RawTime = new DateTime(2020, 7, 26, 15, 6, 53, 622, DateTimeKind.Local).AddTicks(1213)
+                            RawTime = new DateTime(2020, 7, 30, 21, 25, 30, 289, DateTimeKind.Local).AddTicks(8838)
                         });
                 });
 
@@ -138,6 +138,12 @@ namespace project.Migrations
                     b.Property<string>("M_Id")
                         .HasColumnType("varchar(10)");
 
+                    b.Property<string>("Account")
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime");
+
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("datetime");
 
@@ -147,11 +153,14 @@ namespace project.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("Passsword")
+                    b.Property<string>("Password")
                         .HasColumnType("varchar(100)");
 
                     b.Property<bool>("Role")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("varchar(2)");
 
                     b.HasKey("M_Id");
 
@@ -161,11 +170,14 @@ namespace project.Migrations
                         new
                         {
                             M_Id = "1",
-                            CreateTime = new DateTime(2020, 7, 26, 15, 6, 53, 610, DateTimeKind.Local).AddTicks(5737),
+                            Account = "admin001",
+                            BirthDate = new DateTime(2020, 7, 30, 21, 25, 30, 277, DateTimeKind.Local).AddTicks(9973),
+                            CreateTime = new DateTime(2020, 7, 30, 21, 25, 30, 278, DateTimeKind.Local).AddTicks(8428),
                             Email = "ok96305@gmail.com",
                             Name = "陳建成",
-                            Passsword = "12345",
-                            Role = true
+                            Password = "12345",
+                            Role = true,
+                            Sex = "男"
                         });
                 });
 

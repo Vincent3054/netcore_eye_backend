@@ -29,22 +29,33 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
 
         // POST: api/Register
         [HttpPost] //http協定 
+        [Route("Register")] //http協定 
         public async Task<ActionResult> Register(UserResources RegisterData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
         {
-            
             var userDTO = this._mapper.Map<UserModel>(RegisterData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
-            bool status = await this._MembersDBService.Register(userDTO);//呼叫function到Service並把map修改後的DTO傳過去
-            if(status)//回傳狀態瑪顯示
+            if(await this._MembersDBService.AccountCheck(userDTO.Account))//確認帳號是否已註冊過
             {
-                return Ok(); //200
+                bool status = await this._MembersDBService.Register(userDTO);//呼叫function到Service並把map修改後的DTO傳過去
+                if(status)//回傳狀態瑪顯示
+                {
+                    return Ok(); //200
+                }
+                else 
+                {
+                    return BadRequest(); //400
+                }
             }
-            else 
+            else
             {
-                return BadRequest(); //400
+                return NotFound(); //404
             }
-            // return BadRequest();400 notfu
         }  
-       
+        [HttpPost]
+        [Route("Login")] //http協定 
+        public ActionResult Login(UserResources RegisterData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
+        {
+             return Ok("123");
+        }
     }
         
 }

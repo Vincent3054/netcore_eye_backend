@@ -24,6 +24,8 @@ namespace project.Services
         #region 註冊會員
         public async Task<bool> Register(UserModel newUser) //回傳值 <bool>
         {
+            //如果已存在帳號不給註冊
+            
             try//確保程式不會因執行錯誤而整個中斷
             {
                 // user.Id = _users.Count() == 0 ? 1 : _users.Max(c => c.Id) + 1; 產生M_Id
@@ -59,13 +61,13 @@ namespace project.Services
         #endregion
         
         #region 藉由帳號取得單筆會員資料
-        public async Task<List<UserModel>> GetMemberByAccount(string Account)
+        public async Task<UserModel> GetMemberByAccount(string Account)
         {
             try
             {
                 return  await this._DBContext.User
                             .Where(b => b.Account == Account)
-                            .ToListAsync();
+                            .FirstOrDefaultAsync(); //會補空值
             }
             catch (DbUpdateException e)
             {
@@ -139,7 +141,14 @@ namespace project.Services
             return Id.ToString();
         }
         #endregion
-
+        
+        #region 重複註冊判斷
+        public  async Task<bool> AccountCheck(string Account)
+        {
+            UserModel Data = await GetMemberByAccount(Account);
+            return (Data == null);
+        }
+        #endregion
     }
 }
 #region 筆記
