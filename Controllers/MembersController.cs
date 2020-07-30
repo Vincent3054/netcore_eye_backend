@@ -4,98 +4,85 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using MyWebsite;
 using project.Resources;
+using project.Services;
 
-namespace project.Controllers
+namespace project.Controllers //用namespace包起來 project(檔名.現在的資料夾) using的時候方便看到
 {
-    [ApiController]
-    [Route("api/[controller]")] //ur;名子
-    public class MembersController : ControllerBase
+    [ApiController]//web api 必加 (自動啟用回傳400功能、和自動套用[FromBody]等屬性) 註1
+    [Route("api/[controller]")] //URL路徑http://localhost:15175/api/Members，[controller]把MembersController取代成Members
+    public class MembersController : ControllerBase //繼承自ControllerBase 基底類別 註2
     {
-        //連線字串 c=>s 才可以做連線
-        private readonly MyContext _myContext;
-        private readonly IMapper _mapper;
-        private readonly MembersDBService _MembersDBService;
+        //宣告全域變數
+        private readonly MyContext _DBContext;//DB
+        private readonly IMapper _mapper;//AutoMap
+        private readonly MembersDBService _MembersDBService;//Service
 
-        public MembersController(IMapper mapper,MyContext Context) //建構子
+        public MembersController(IMapper mapper,MyContext DBContext) //建構子
         {
             this._mapper = mapper;
-            this._myContext =  Context; //sercer也要用一個
-            this._MembersDBService=new MembersDBService(_myContext);
-            //orm ??!!
-            //建構子 裡面的東東 new會寫在這裡 (db)
-            //map
+            this._DBContext =  DBContext; 
+            //Service建議用DI注入的方式 但因為本系統架構不大所以先用new的方式 註2
+            this._MembersDBService=new MembersDBService(_DBContext);
         }
-        //models 和 resources view models 做轉換 map是放進去
-        //註冊帳號密碼 altmap 把藥用的東西放在viewmodel 
-        //map 前置作業model 做連結才可在s用  箝制作業會寫在resources 開一個資料夾 網路查
-        [HttpPost] //api
-        //回傳狀態瑪顯示
-        //orm寫法 s要用
-        //c只做接收view傳來的東西 呼叫s去做運算 (c只做接收view的需求 和回傳view要得東西)
-        //加密都在s處理
-        public IActionResult Members(UserViewModel RegisterData){
-    		// var user = this._svc.Get();
-            // UserViewModel userViewModel =_mapper.Map<UserViewModel>(user);
+
+        // POST: api/Register
+        [HttpPost] //http協定 
+        public async Task<ActionResult> Register(UserResources RegisterData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
+        {
             
-        }	     
-
-       // POST: api/TodoItems
-        [HttpPost]
-        public async Task<ActionResult<UserModel>> PostMembersController(UserModel RegisterData)
-        {
-            _myContext.UserModel.Add(RegisterData);
-            await _context.SaveChangesAsync();
-
-            //return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
-            // return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, todoItem);
-        }
-
-        public async Task<ActionResult> GetUserAsync(UserResources user)
-        {
-            // UserModel user = new UserModel();
-            var userDTO =  this._mapper.Map<UserModel>(user);
-            bool a= await  this._MembersDBService.PostMember(userDTO);
-            if(a)
+            var userDTO = this._mapper.Map<UserModel>(RegisterData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
+            bool status = await this._MembersDBService.Register(userDTO);//呼叫function到Service並把map修改後的DTO傳過去
+            if(status)//回傳狀態瑪顯示
             {
-                return Ok();
+                return Ok(); //200
             }
-            else
+            else 
             {
-                return BadRequest();
+                return BadRequest(); //400
             }
             // return BadRequest();400 notfu
-            // var name = userDTO.Name; 
-            // var email = userDTO.Email; 
-            // return user;
-        }    
-        // private static List<UserModel> _users = new List<UserModel>();
+        }  
+       
+    }
+        
+}
+#region 筆記
+/* AutoMapper筆記
+        可以讓view model 和 model 去做轉換
+        以api為例 拿到的東西是viewModel但是要存進model
+        這時就可以用map去做轉換
+        
+        前置作業要 先di注入後 在箝制作業會寫在resources建一個Profile檔並做設定 
+*/
+/* WebApi筆記
+        繼承ControllerBase
+        加上[ApiController]
+        Controllers負責接受VIEW傳來的東西(或回傳view要得東西) 並呼叫Services去做運算
+        Services sql的部分藥用orm的寫法
+        加密那些都寫在Services
 
-         [HttpPost]
-        // public async Task<UserModel> PostAsync([FromBody]UserModel user)
-        // {
-        //     var result = new UserModel();
-        //     // user.Id = _users.Count() == 0 ? 1 : _users.Max(c => c.Id) + 1;
-        //     _users.Add(user);
-        //     result.Name = user.Name;
-        //     result.Email = user.Email;
-        //     result.Passsword = user.Passsword;
-        //     await MembersDBService.PostMember();
-        //     return result;
-        // }
-        public async Task<ActionResult> PostAsync([FromBody]UserModel user)
-        {
-            var result = new UserModel();
-            // user.Id = _users.Count() == 0 ? 1 : _users.Max(c => c.Id) + 1;
-            _users.Add(user);
+        DI注入 DB、AutoMap、Service
+*/
+/*參考程式碼
+    public Task<ActionResult> PostAsync(UserModel user)
+    {
+        var result = new UserModel();
             result.Name = user.Name;
             result.Email = user.Email;
-            result.Passsword = user.Passsword;
-            await MembersDBService.PostMember();
-            return result;
-        }
-
-    }
-}
+            result.Passsword = user.Passsword;    
+    }    
+*/
+/*
+    註1 https://ithelp.ithome.com.tw/articles/10208987
+    註2 https://ithelp.ithome.com.tw/articles/10193172
+    註3 同步、非同步寫法
+           同步寫法
+               public IActionResult Members(UserViewModel RegisterData){}
+           非同步寫法 (async、Task<>、awit...)
+               public async Task<IActionResult> MembersAsync(UserViewModel RegisterData){awit...} 
+    註4 ViewModel 一個頁面就會有一個viewModel 裡面放那個頁面需要用到的欄位
+    註5 https://ithelp.ithome.com.tw/articles/10157130     
+*/
+#endregion

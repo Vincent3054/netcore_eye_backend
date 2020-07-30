@@ -9,7 +9,8 @@ namespace project.Resources{
     {
         public string M_Id { get; set; }
         public string Email { get; set; }
-        public string Passsword { get; set; }
+        public string Account { get; set; }
+        public string Password { get; set; }
         public string Name { get; set; }//格式
         
         

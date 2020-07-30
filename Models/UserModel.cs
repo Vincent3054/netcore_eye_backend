@@ -11,10 +11,12 @@ namespace MyWebsite
         [Column(TypeName = "varchar(10)")]
         [Required]
         public string M_Id { get; set; }
+        [Column(TypeName = "varchar(30)")]
+        public string Account { get; set; }
+        [Column(TypeName = "varchar(100)")]
+        public string Password { get; set; }
         [Column(TypeName = "varchar(100)")]
         public string Email { get; set; }
-        [Column(TypeName = "varchar(100)")]
-        public string Passsword { get; set; }
         [Column(TypeName = "nvarchar(30)")]
         public string Name { get; set; }
         [Column(TypeName = "bit")]
