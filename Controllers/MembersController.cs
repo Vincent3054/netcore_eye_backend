@@ -16,7 +16,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
     public class MembersController : ControllerBase //繼承自ControllerBase 基底類別 註2
     {
         //宣告全域變數
-        private readonly MyContext _DBContext;//DB
+        private readonly MyContext _DBContext;//DB  
         private readonly IMapper _mapper;//AutoMap
         private readonly MembersDBService _MembersDBService;//Service
 
@@ -33,8 +33,8 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         [Route("Register")] //http協定 
         public async Task<ActionResult> Register(UserResources RegisterData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
         {
-            var userDTO = this._mapper.Map<UserModel>(RegisterData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
-
+            var userDTO = this._mapper.Map<UserResources,UserModel>(RegisterData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
+            // 
             // bool status = await this._MembersDBService.Register(userDTO);
             if (await this._MembersDBService.Register(userDTO))//呼叫function到Service並把map修改後的DTO傳過去
             {
@@ -54,15 +54,25 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             var userDTO = this._mapper.Map<UserModel>(LoginData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
             if (await this._MembersDBService.LoginCheck(userDTO))
             {
-
+                return Ok();
             }
-            return Ok("123");
+            else
+            {
+                return BadRequest(); //400
+            }
         }
 
     }
 
 }
 #region 筆記
+
+/*
+iActionResult
+ActionResult
+<ActionResult> <型態>
+*/
+
 /* AutoMapper筆記
         可以讓view model 和 model 去做轉換
         以api為例 拿到的東西是viewModel但是要存進model

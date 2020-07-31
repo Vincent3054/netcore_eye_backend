@@ -28,7 +28,7 @@ namespace project.Services
             if (await GetMemberByAccount(logindata.Account) != null)//如果有資料
             {
                 //進行帳號密碼確認
-                if (PasswordCheck(LoginMember, Password))
+                if (logindata.Equals(HashPassword(logindata.Password)))
                 {
                     return true;
                 }
@@ -45,9 +45,9 @@ namespace project.Services
         #endregion
         #region 註冊會員
         public async Task<bool> Register(UserModel newUser) //回傳值 <bool>
-        {
+        {   
             //判斷此帳號使否已被註冊
-            if (await AccountCheck(newUser.Account))
+            if (await GetMemberByAccount(newUser.Account)==null)//如果沒資料
             {
                 try//確保程式不會因執行錯誤而整個中斷
                 {
@@ -96,7 +96,7 @@ namespace project.Services
             {
                 return await this._DBContext.User
                                  .Where(b => b.Account == Account)
-                                 .FirstOrDefaultAsync(); //會補空值     
+                                 .FirstOrDefaultAsync(); //會補空值  只抓第一筆   
             }
             catch (DbUpdateException e)
             {
@@ -131,8 +131,11 @@ namespace project.Services
                 //sql語法
                 //string sql = $@"Delete from User WHERE Account='{Account}'";
                 var User = this._DBContext.User
-                               .Where(b => b.Account == Account);//篩選
-                                                                 // .Single(b => b.Account == Account) 載入單一實體                    
+                               .Single(b => b.Account == Account);//篩選
+                                     //work linq w### lambda    
+                                     // s、find  where  b=>
+                                     //      Single只會抓一筆 
+                                     //     find  where                // .Single(b => b.Account == Account) 載入單一實體                    
                 this._DBContext.Remove(User);
                 await this._DBContext.SaveChangesAsync();
             }
@@ -144,7 +147,7 @@ namespace project.Services
         #endregion
 
         #region Hash密碼
-        //Hash密碼用的方法
+        //Hash密碼用的方法 (另一種加密MD5)
         public string HashPassword(string Password)
         {   //宣告Hash時所添加的無意義亂數值    
             string saltkey = "1q2w3e4r5t6y7u8ui9o0po7tyy";
@@ -169,25 +172,25 @@ namespace project.Services
         {
             Guid Id = Guid.NewGuid();
             return Id.ToString();
+            // 判斷guid有無被重複使用 
         }
         #endregion
 
-        #region 確認帳號是否已被使用
-        public async Task<bool> AccountCheck(string Account)
-        {
-            UserModel Data = await GetMemberByAccount(Account);
-            return (Data == null);
-        }
-        #endregion
+        // #region 確認帳號是否已被使用
+        // public async Task<bool> AccountCheck(string Account)
+        // {
+        //     UserModel Data = await GetMemberByAccount(Account);
+        //     return (Data == null);
+        // }
+        // #endregion
 
-        #region 確認密碼是否正確
-        public bool PasswordCheck(Member CheckMember, string Password)
-        {
-            bool result = CheckMember.Password.Equals(HashPassword(Password));
-            return result;
-
-        }
-        #endregion
+        // #region 確認密碼是否正確
+        // public bool PasswordCheck(UserModel CheckMember, string Password)
+        // {
+        //     bool result = CheckMember.Equals(HashPassword(Password));
+        //     return result;
+        // }
+        // #endregion
     }
 }
 #region 筆記
