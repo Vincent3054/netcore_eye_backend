@@ -7,7 +7,7 @@ namespace MyWebsite
 {
     public class AnalysisLogModel
     {
-        [Key,Column(TypeName = "varchar(10)"),Required]
+        [Column(TypeName = "varchar(50)")]
         public string A_Id { get; set; }
         
         [ForeignKey("UserModel")]

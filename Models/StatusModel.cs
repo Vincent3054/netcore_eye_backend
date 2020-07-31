@@ -8,7 +8,7 @@ namespace MyWebsite
     public class StatusModel
     {
         [Key] 
-        [Column(TypeName = "varchar(100)")]
+        [Column(TypeName = "varchar(50)")]
         [Required]
         public string S_Id { get; set; }
         [Column(TypeName = "nvarChar(36)")]

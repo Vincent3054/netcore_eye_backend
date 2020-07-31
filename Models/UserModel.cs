@@ -9,7 +9,7 @@ namespace MyWebsite
     {   
         //會員編號
         [Key]
-        [Column(TypeName = "varchar(10)")]
+        [Column(TypeName = "varchar(50)")]
         [Required]
         public string M_Id { get; set; }
         //帳號

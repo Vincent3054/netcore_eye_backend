@@ -22,19 +22,19 @@ namespace project.Migrations
             modelBuilder.Entity("MyWebsite.AnalysisLogModel", b =>
                 {
                     b.Property<string>("A_Id")
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime>("AnalysisTime")
                         .HasColumnType("datetime");
 
                     b.Property<string>("B_Id")
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Image")
                         .HasColumnType("NvarChar(Max)");
 
                     b.Property<string>("M_Id")
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("A_Id");
 
@@ -48,7 +48,7 @@ namespace project.Migrations
                         new
                         {
                             A_Id = "1",
-                            AnalysisTime = new DateTime(2020, 7, 30, 21, 25, 30, 287, DateTimeKind.Local).AddTicks(5944),
+                            AnalysisTime = new DateTime(2020, 7, 31, 16, 57, 7, 745, DateTimeKind.Local).AddTicks(4470),
                             B_Id = "1",
                             Image = "https://i.imgur.com/PuC21Ma.png",
                             M_Id = "1"
@@ -63,10 +63,10 @@ namespace project.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("A_Id")
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("S_Id")
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("AS_Id");
 
@@ -88,7 +88,7 @@ namespace project.Migrations
             modelBuilder.Entity("MyWebsite.BeforeAnalysisLogModel", b =>
                 {
                     b.Property<string>("B_Id")
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("RawImage")
                         .HasColumnType("NvarChar(Max)");
@@ -105,14 +105,14 @@ namespace project.Migrations
                         {
                             B_Id = "1",
                             RawImage = "https://i.imgur.com/cfeJ9j7.png",
-                            RawTime = new DateTime(2020, 7, 30, 21, 25, 30, 289, DateTimeKind.Local).AddTicks(8838)
+                            RawTime = new DateTime(2020, 7, 31, 16, 57, 7, 747, DateTimeKind.Local).AddTicks(8309)
                         });
                 });
 
             modelBuilder.Entity("MyWebsite.StatusModel", b =>
                 {
                     b.Property<string>("S_Id")
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Message")
                         .HasColumnType("Nvarchar(200)");
@@ -136,7 +136,7 @@ namespace project.Migrations
             modelBuilder.Entity("MyWebsite.UserModel", b =>
                 {
                     b.Property<string>("M_Id")
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Account")
                         .HasColumnType("varchar(30)");
@@ -171,8 +171,8 @@ namespace project.Migrations
                         {
                             M_Id = "1",
                             Account = "admin001",
-                            BirthDate = new DateTime(2020, 7, 30, 21, 25, 30, 277, DateTimeKind.Local).AddTicks(9973),
-                            CreateTime = new DateTime(2020, 7, 30, 21, 25, 30, 278, DateTimeKind.Local).AddTicks(8428),
+                            BirthDate = new DateTime(2020, 7, 31, 16, 57, 7, 733, DateTimeKind.Local).AddTicks(1485),
+                            CreateTime = new DateTime(2020, 7, 31, 16, 57, 7, 735, DateTimeKind.Local).AddTicks(7877),
                             Email = "ok96305@gmail.com",
                             Name = "陳建成",
                             Password = "12345",

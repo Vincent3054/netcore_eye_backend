@@ -8,7 +8,9 @@ namespace project.Resources
         public AutoMapping()
         {
             //<前,後>前要轉成後面的，<來源,欲修改> 
-            CreateMap<UserResources, UserModel>(); // means you want to map from User to UserDTO
+            CreateMap<UserResources, UserModel>();
+            CreateMap<LoginResources, UserModel>(); 
+
         }
     }
 

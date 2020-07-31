@@ -11,7 +11,7 @@ namespace project.Migrations
                 name: "BeforeAnalysisLog",
                 columns: table => new
                 {
-                    B_Id = table.Column<string>(type: "varchar(10)", nullable: false),
+                    B_Id = table.Column<string>(type: "varchar(50)", nullable: false),
                     RawImage = table.Column<string>(type: "NvarChar(Max)", nullable: true),
                     RawTime = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
@@ -24,7 +24,7 @@ namespace project.Migrations
                 name: "Status",
                 columns: table => new
                 {
-                    S_Id = table.Column<string>(type: "varchar(100)", nullable: false),
+                    S_Id = table.Column<string>(type: "varchar(50)", nullable: false),
                     StatusName = table.Column<string>(type: "nvarChar(36)", nullable: true),
                     Message = table.Column<string>(type: "Nvarchar(200)", nullable: true)
                 },
@@ -37,7 +37,7 @@ namespace project.Migrations
                 name: "User",
                 columns: table => new
                 {
-                    M_Id = table.Column<string>(type: "varchar(10)", nullable: false),
+                    M_Id = table.Column<string>(type: "varchar(50)", nullable: false),
                     Account = table.Column<string>(type: "varchar(30)", nullable: true),
                     Password = table.Column<string>(type: "varchar(100)", nullable: true),
                     Email = table.Column<string>(type: "varchar(100)", nullable: true),
@@ -56,7 +56,7 @@ namespace project.Migrations
                 name: "AnalysisLog",
                 columns: table => new
                 {
-                    A_Id = table.Column<string>(type: "varchar(10)", nullable: false),
+                    A_Id = table.Column<string>(type: "varchar(50)", nullable: false),
                     M_Id = table.Column<string>(nullable: true),
                     B_Id = table.Column<string>(nullable: true),
                     Image = table.Column<string>(type: "NvarChar(Max)", nullable: true),
@@ -108,7 +108,7 @@ namespace project.Migrations
             migrationBuilder.InsertData(
                 table: "BeforeAnalysisLog",
                 columns: new[] { "B_Id", "RawImage", "RawTime" },
-                values: new object[] { "1", "https://i.imgur.com/cfeJ9j7.png", new DateTime(2020, 7, 30, 21, 25, 30, 289, DateTimeKind.Local).AddTicks(8838) });
+                values: new object[] { "1", "https://i.imgur.com/cfeJ9j7.png", new DateTime(2020, 7, 31, 16, 57, 7, 747, DateTimeKind.Local).AddTicks(8309) });
 
             migrationBuilder.InsertData(
                 table: "Status",
@@ -118,12 +118,12 @@ namespace project.Migrations
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "M_Id", "Account", "BirthDate", "CreateTime", "Email", "Name", "Password", "Role", "Sex" },
-                values: new object[] { "1", "admin001", new DateTime(2020, 7, 30, 21, 25, 30, 277, DateTimeKind.Local).AddTicks(9973), new DateTime(2020, 7, 30, 21, 25, 30, 278, DateTimeKind.Local).AddTicks(8428), "ok96305@gmail.com", "陳建成", "12345", true, "男" });
+                values: new object[] { "1", "admin001", new DateTime(2020, 7, 31, 16, 57, 7, 733, DateTimeKind.Local).AddTicks(1485), new DateTime(2020, 7, 31, 16, 57, 7, 735, DateTimeKind.Local).AddTicks(7877), "ok96305@gmail.com", "陳建成", "12345", true, "男" });
 
             migrationBuilder.InsertData(
                 table: "AnalysisLog",
                 columns: new[] { "A_Id", "AnalysisTime", "B_Id", "Image", "M_Id" },
-                values: new object[] { "1", new DateTime(2020, 7, 30, 21, 25, 30, 287, DateTimeKind.Local).AddTicks(5944), "1", "https://i.imgur.com/PuC21Ma.png", "1" });
+                values: new object[] { "1", new DateTime(2020, 7, 31, 16, 57, 7, 745, DateTimeKind.Local).AddTicks(4470), "1", "https://i.imgur.com/PuC21Ma.png", "1" });
 
             migrationBuilder.InsertData(
                 table: "AnalysisStatus",

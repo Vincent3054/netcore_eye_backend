@@ -9,7 +9,7 @@ namespace MyWebsite
     public class BeforeAnalysisLogModel
     {
     [Key]
-    [Column(TypeName = "varchar(10)")]
+    [Column(TypeName = "varchar(50)")]
     [Required]
     public string B_Id { get; set; }
 
