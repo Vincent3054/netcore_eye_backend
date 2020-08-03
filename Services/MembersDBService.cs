@@ -22,13 +22,15 @@ namespace project.Services
         }
         #region 登入
 
-        public async Task<bool> LoginCheck(UserModel logindata)
+        public async Task<bool> LoginCheckAsync(UserModel logindata)
         {
             //根據帳號去查會員資料
-            if (await GetMemberByAccount(logindata.Account) != null)//如果有資料
+            UserModel LoginMember = await GetMemberByAccountAsync(logindata.Account);
+            //判斷是否有此帳號
+            if (LoginMember.Account != null)//如果有這個帳號
             {
-                //進行帳號密碼確認
-                if (logindata.Equals(HashPassword(logindata.Password)))
+                //進行密碼確認
+                if (LoginMember.Password.Equals(HashPassword(logindata.Password)))
                 {
                     return true;
                 }
@@ -44,20 +46,16 @@ namespace project.Services
         }
         #endregion
         #region 註冊會員
-        public async Task<bool> Register(UserModel newUser) //回傳值 <bool>
-        {   
+        public async Task<bool> RegisterAsync(UserModel newUser) //回傳值 <bool>
+        {
             //判斷此帳號使否已被註冊
-            if (await GetMemberByAccount(newUser.Account)==null)//如果沒資料
+            if (await GetMemberByAccountAsync(newUser.Account) == null)//如果沒有這個號資料
             {
-                try//確保程式不會因執行錯誤而整個中斷
+                try
                 {
-                    // user.Id = _users.Count() == 0 ? 1 : _users.Max(c => c.Id) + 1; 產生M_Id
-                    // newUser.M_Id=_DBContext.User.Count()==0?1:_DBContext.User.Max(c=>c.M_Id)+1; 目前是字串不能用max 還有+1
-                    newUser.M_Id = GetGUID();
+                    newUser.M_Id = await GetGUIDAsync();
                     newUser.Password = HashPassword(newUser.Password);//密碼 hash
-                    newUser.CreateTime = DateTime.Now;//產生建立時間
-                    //sql語法
-                    //string sql = $@" INSERT INTO User VALUES ('{newUser.M_Id}','{newUser.Account}','{newUser.Password}','{newUser.Name}','{newUser.Email}','{newUser.Role}','{newUser.CreateTime}' )";
+                    newUser.CreateTime = DateTime.Now;//產生帳號建立時間
                     await this._DBContext.User.AddAsync(newUser);
                     await this._DBContext.SaveChangesAsync();
                     return true;
@@ -75,22 +73,8 @@ namespace project.Services
         }
         #endregion 
 
-        #region 取得所有會員資料
-        public async Task<List<UserModel>> GetMember()//回傳多個List(用UserModel型態)
-        {
-            try
-            {
-                return await this._DBContext.User.ToListAsync(); //查全部
-            }
-            catch (DbUpdateException e)
-            {
-                throw new DbUpdateException(e.Message.ToString());
-            }
-        }
-        #endregion
-
         #region 藉由帳號取得單筆會員資料
-        public async Task<UserModel> GetMemberByAccount(string Account)
+        public async Task<UserModel> GetMemberByAccountAsync(string Account)
         {
             try
             {
@@ -103,6 +87,20 @@ namespace project.Services
                 throw new DbUpdateException(e.Message.ToString());
             }
 
+        }
+        #endregion
+
+        #region 取得所有會員資料
+        public async Task<List<UserModel>> GetMember()//回傳多個List(用UserModel型態)
+        {
+            try
+            {
+                return await this._DBContext.User.ToListAsync(); //查全部
+            }
+            catch (DbUpdateException e)
+            {
+                throw new DbUpdateException(e.Message.ToString());
+            }
         }
         #endregion
 
@@ -128,14 +126,12 @@ namespace project.Services
         {
             try
             {
-                //sql語法
-                //string sql = $@"Delete from User WHERE Account='{Account}'";
                 var User = this._DBContext.User
                                .Single(b => b.Account == Account);//篩選
-                                     //work linq w### lambda    
-                                     // s、find  where  b=>
-                                     //      Single只會抓一筆 
-                                     //     find  where                // .Single(b => b.Account == Account) 載入單一實體                    
+                                                                  //work linq w### lambda    
+                                                                  // s、find  where  b=>
+                                                                  //      Single只會抓一筆 
+                                                                  //     find  where                // .Single(b => b.Account == Account) 載入單一實體                    
                 this._DBContext.Remove(User);
                 await this._DBContext.SaveChangesAsync();
             }
@@ -168,11 +164,27 @@ namespace project.Services
 
         #region 產生GUID
         //產生GUID
-        public string GetGUID()
+        public async Task<string> GetGUIDAsync()
         {
-            Guid Id = Guid.NewGuid();
-            return Id.ToString();
             // 判斷guid有無被重複使用 
+            try
+            {
+                UserModel Member = new UserModel();
+                String A;
+                do
+                {
+                    Guid Id = Guid.NewGuid();
+                    A = Id.ToString();
+                    Member = await this._DBContext.User
+                                 .Where(b => b.M_Id == A)
+                                 .FirstOrDefaultAsync();
+                } while (Member != null);
+                return A;
+            }
+            catch (DbUpdateException e)
+            {
+                throw new DbUpdateException(e.Message.ToString());
+            }
         }
         #endregion
 
@@ -235,6 +247,9 @@ namespace project.Services
         var User = new UserModel { Name = url };
         await _DBContext.User.AddAsync(User);
         await _DBContext.SaveChangesAsync();       
-    }       
+    }
+    3.產生ID
+        user.Id = _users.Count() == 0 ? 1 : _users.Max(c => c.Id) + 1; 產生M_Id
+        newUser.M_Id=_DBContext.User.Count()==0?1:_DBContext.User.Max(c=>c.M_Id)+1; 目前是字串不能用max 還有+1
 */
 #endregion

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace project.Resources{
 
-    public class UserResources
+    public class RegisterResources
     {
         public string M_Id { get; set; }
         public string Account { get; set; }

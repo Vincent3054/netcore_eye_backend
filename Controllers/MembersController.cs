@@ -28,39 +28,77 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             this._MembersDBService = new MembersDBService(_DBContext);
         }
 
-        // POST: api/Register
+        #region 註冊
+        // POST: api/Members/Register
         [HttpPost] //http協定 
         [Route("Register")] //http協定 
-        public async Task<ActionResult> Register(UserResources RegisterData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
+        public async Task<ActionResult> Register(RegisterResources RegisterData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
         {
-            var userDTO = this._mapper.Map<UserResources,UserModel>(RegisterData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
+            var userDTO = this._mapper.Map<RegisterResources, UserModel>(RegisterData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
             // 
             // bool status = await this._MembersDBService.Register(userDTO);
-            if (await this._MembersDBService.Register(userDTO))//呼叫function到Service並把map修改後的DTO傳過去
+            if (await this._MembersDBService.RegisterAsync(userDTO))//呼叫function到Service並把map修改後的DTO傳過去
             {
                 return Ok("註冊成功"); //200
             }
             else
             {
-                return BadRequest("帳號已被使用"); //400
+                return BadRequest("註冊失敗"); //400
             }
-
         }
+        #endregion
 
+        #region 登入
+        // POST: api/Members/Login
         [HttpPost]
         [Route("Login")] //http協定 
-        public async Task<ActionResult> LoginAsync(LoginResources LoginData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
+        public async Task<ActionResult> Login(LoginResources LoginData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
         {
-            var userDTO = this._mapper.Map<UserModel>(LoginData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
-            if (await this._MembersDBService.LoginCheck(userDTO))
+            var userDTO = this._mapper.Map<LoginResources, UserModel>(LoginData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
+            if (await this._MembersDBService.LoginCheckAsync(userDTO))
             {
-                return Ok();
+                return Ok("登入成功");
             }
             else
             {
-                return BadRequest(); //400
+                return BadRequest("登入失敗"); //400
             }
         }
+        #endregion
+
+        #region 顯示會員資料列
+        [HttpGet]
+        [Route("All")]
+        public async Task<ActionResult> GetMembersAsync()
+        {
+            try
+            {
+                List<UserModel> GetMembersData =await this._MembersDBService.GetMember();
+                var userDTO = this._mapper.Map<List<UserModel>,List<MembersAllResources>>(GetMembersData);
+                return Ok(userDTO);
+            }
+            catch
+            {
+                return BadRequest("查詢失敗"); //400
+            }
+        }
+        #endregion
+
+        #region 刪除會員
+        [HttpDelete]
+        [Route("Delete")]
+        public async ActionResult DeleteMemberAsync()
+        {
+            try
+            {
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        #endregion
 
     }
 

@@ -37,6 +37,6 @@ namespace MyWebsite
         [Column(TypeName = "datetime")]
         public DateTime CreateTime { get; set; }
         public virtual ICollection<AnalysisLogModel> AnalysisLog { get; set; }
-        
+
     }
 }
