@@ -7,7 +7,6 @@ namespace project.Resources.Request{
 
     public class RegisterResources
     {
-        public string M_Id { get; set; }
         public string Account { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }

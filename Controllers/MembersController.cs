@@ -27,7 +27,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             this._mapper = mapper;
             this._DBContext = DBContext;
             //Service建議用DI注入的方式 但因為本系統架構不大所以先用new的方式 註2
-            this._MembersDBService = new MembersDBService(_DBContext);
+            this._MembersDBService = new MembersDBService(_mapper,_DBContext);
         }
 
         #region 註冊
@@ -36,10 +36,10 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         [Route("Register")] //http協定 
         public async Task<ActionResult> Register(RegisterResources RegisterData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
         {
-            var userDTO = this._mapper.Map<RegisterResources, UserModel>(RegisterData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
+            // var userDTO = this._mapper.Map<RegisterResources, UserModel>(RegisterData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
             // 
             // bool status = await this._MembersDBService.Register(userDTO);
-            if (await this._MembersDBService.RegisterAsync(userDTO))//呼叫function到Service並把map修改後的DTO傳過去
+            if (await this._MembersDBService.RegisterAsync(RegisterData))//呼叫function到Service並把原始資料傳過去
             {
                 return Ok("註冊成功"); //200
             }

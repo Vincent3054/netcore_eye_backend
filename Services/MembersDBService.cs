@@ -11,16 +11,20 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models;
+using project.Resources.Request;
+
 namespace project.Services
 {
     public class MembersDBService
     {
         private readonly MyContext _DBContext; //全域變數
-
-        public MembersDBService(MyContext DBContext)//建構子
+        private readonly IMapper _mapper;//AutoMap
+        public MembersDBService(IMapper mapper,MyContext DBContext)
         {
-            this._DBContext = DBContext;//server一樣要注入一次DB
+            this._mapper = mapper;
+            this._DBContext = DBContext;
         }
+
         #region 登入
 
         public async Task<bool> LoginCheckAsync(UserModel logindata)
@@ -47,19 +51,21 @@ namespace project.Services
         }
         #endregion
         #region 註冊會員
-        public async Task<bool> RegisterAsync(UserModel newUser) //回傳值 <bool>
+        public async Task<bool> RegisterAsync(RegisterResources newUser) //回傳值 <bool>
         {
+             var userDTO = this._mapper.Map<RegisterResources,UserModel>(newUser);//AutoMap<來源,欲修改>(來源)連到Profile檔的設置
+
             //根據帳號去查會員資料
-            UserModel RegisteMember =await GetMemberByAccountAsync(newUser.Account);
+            // UserModel RegisteMember =await GetMemberByAccountAsync(userDTO.Account);
             //判斷此帳號使否已被註冊
-            if (RegisteMember.Account == null)//如果沒有這個號資料
+            if (await GetMemberByAccountAsync(userDTO.Account)== null)//如果沒有這個號資料
             {
                 try
                 {
-                    newUser.M_Id = await GetGUIDAsync();
-                    newUser.Password = HashPassword(newUser.Password);//密碼 hash
-                    newUser.CreateTime = DateTime.Now;//產生帳號建立時間
-                    await this._DBContext.User.AddAsync(newUser);
+                    userDTO.M_Id = await GetGUIDAsync();
+                    userDTO.Password = HashPassword(userDTO.Password);//密碼 hash
+                    userDTO.CreateTime = DateTime.Now;//產生帳號建立時間
+                    await this._DBContext.User.AddAsync(userDTO);
                     await this._DBContext.SaveChangesAsync();
                     return true;
                 }
