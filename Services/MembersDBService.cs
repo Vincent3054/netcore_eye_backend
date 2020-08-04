@@ -48,8 +48,10 @@ namespace project.Services
         #region 註冊會員
         public async Task<bool> RegisterAsync(UserModel newUser) //回傳值 <bool>
         {
+            //根據帳號去查會員資料
+            UserModel RegisteMember =await GetMemberByAccountAsync(newUser.Account);
             //判斷此帳號使否已被註冊
-            if (await GetMemberByAccountAsync(newUser.Account) == null)//如果沒有這個號資料
+            if (RegisteMember.Account == null)//如果沒有這個號資料
             {
                 try
                 {
@@ -80,7 +82,7 @@ namespace project.Services
             {
                 return await this._DBContext.User
                                  .Where(b => b.Account == Account)
-                                 .FirstOrDefaultAsync(); //會補空值  只抓第一筆   
+                                 .FirstOrDefaultAsync(); //只抓第一筆(會補空值)
             }
             catch (DbUpdateException e)
             {
@@ -122,18 +124,16 @@ namespace project.Services
         #endregion
 
         #region 刪除會員
-        public async Task DeleteMember(string Account) //不回傳值
+        public async Task<bool> DeleteMember(string Account) //不回傳值
         {
             try
             {
-                var User = this._DBContext.User
-                               .Single(b => b.Account == Account);//篩選
-                                                                  //work linq w### lambda    
-                                                                  // s、find  where  b=>
-                                                                  //      Single只會抓一筆 
-                                                                  //     find  where                // .Single(b => b.Account == Account) 載入單一實體                    
+                UserModel User = await this._DBContext.User
+                               .Where(b => b.Account == Account)
+                               .FirstOrDefaultAsync();                
                 this._DBContext.Remove(User);
                 await this._DBContext.SaveChangesAsync();
+                return true;
             }
             catch (DbUpdateException e)
             {
@@ -217,9 +217,15 @@ namespace project.Services
     修改 await this._DBContext.User.Update(newUser);
     刪除 await this._DBContext.User.Remove(newUser);
     查詢 await this._DBContext.User.ToListAsync();
-    查詢單筆 
+
+    查詢單筆 (箭頭寫法)
     await this._DBContext.User.Where(b => b.Account == Account)
-    .ToListAsync();  (印出List資料)     .FirstAsync (選取第一筆資料)
+    .ToList();  (印出List資料)     .First (選取第一筆資料)
+
+    //ORM 篩選
+        Single    只會抓一筆 (抓超過或抓不到就會噴錯)
+        find      (跟where差不多)
+        where     會抓到很多筆(可以結合用.First 來選第一筆資料)
 */
 /* 參考程式碼
     1.非ORM寫法(註冊)

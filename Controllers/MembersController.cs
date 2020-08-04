@@ -73,8 +73,8 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         {
             try
             {
-                List<UserModel> GetMembersData =await this._MembersDBService.GetMember();
-                var userDTO = this._mapper.Map<List<UserModel>,List<MembersAllResources>>(GetMembersData);
+                List<UserModel> GetMembersData = await this._MembersDBService.GetMember();
+                var userDTO = this._mapper.Map<List<UserModel>, List<MembersAllResources>>(GetMembersData);
                 return Ok(userDTO);
             }
             catch
@@ -87,16 +87,17 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         #region 刪除會員
         [HttpDelete]
         [Route("Delete")]
-        public async ActionResult DeleteMemberAsync()
+        public async Task<ActionResult> DeleteMemberAsync(string Account)
         {
-            try
+            if (await this._MembersDBService.DeleteMember(Account))
             {
-                return Ok();
+                return Ok("刪除成功");
             }
-            catch
+            else
             {
-                return BadRequest();
+                return BadRequest("發生錯誤");
             }
+
         }
         #endregion
 
