@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using DBContext;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MyWebsite;
+using Models;
 using project.Resources;
+using project.Resources.Request;
+using project.Resources.Response;
 using project.Services;
-
 namespace project.Controllers //用namespace包起來 project(檔名.現在的資料夾) using的時候方便看到
 {
     [ApiController]//web api 必加 (自動啟用回傳400功能、和自動套用[FromBody]等屬性) 註1

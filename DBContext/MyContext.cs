@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using DBContext.EntityConfiguration;
 using Microsoft.EntityFrameworkCore;
+using Models;
 
-namespace MyWebsite
+namespace DBContext
 {
     public class MyContext : DbContext
     {
@@ -24,9 +26,6 @@ namespace MyWebsite
             modelBuilder.ApplyConfiguration(new StatusEntityConfiguration());
             modelBuilder.ApplyConfiguration(new AnalysisStatusEntityConfiguration());
             modelBuilder.ApplyConfiguration(new BeforeAnalysisLogEntityConfiguration());
-            
         }   
-
-
     }
 }

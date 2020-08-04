@@ -1,15 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyWebsite;
-
-public class StatusEntityConfiguration : IEntityTypeConfiguration<StatusModel>
+using Models;
+namespace DBContext.EntityConfiguration
 {
-    public void Configure(EntityTypeBuilder<StatusModel> builder)
+    public class StatusEntityConfiguration : IEntityTypeConfiguration<StatusModel>
     {
-        builder.HasKey(p => p.S_Id); //主鍵
-    
-        builder.HasData( //Seed Data
-            new StatusModel { S_Id = "1", StatusName="坐姿警示",Message="坐姿過於前傾"}
-        );
+        public void Configure(EntityTypeBuilder<StatusModel> builder)
+        {
+            builder.HasKey(p => p.S_Id); //主鍵
+        
+            builder.HasData( //Seed Data
+                new StatusModel { S_Id = "1", StatusName="坐姿警示",Message="坐姿過於前傾"}
+            );
+        }
     }
 }

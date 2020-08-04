@@ -1,6 +1,9 @@
 using AutoMapper;
-using MyWebsite;
+using Models;
 using project.Resources;
+using project.Resources.Request;
+using project.Resources.Response;
+
 namespace project.Resources
 {
     public class AutoMapping : Profile
