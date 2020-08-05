@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using DBContext;
@@ -34,18 +35,16 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         // POST: api/Members/Register
         [HttpPost] //http協定 
         [Route("Register")] //http協定 
-        public async Task<ActionResult> Register(RegisterResources RegisterData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
+        public async Task<ActionResult> Register([FromBody]RegisterResources RegisterData) //同步異步寫法 註3，Webapi裡面的ViewModel是Resources 註4
         {
-            // var userDTO = this._mapper.Map<RegisterResources, UserModel>(RegisterData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
-            // 
-            // bool status = await this._MembersDBService.Register(userDTO);
+            //controller越乾淨越好，把AutoMap移到Service
             if (await this._MembersDBService.RegisterAsync(RegisterData))//呼叫function到Service並把原始資料傳過去
             {
                 return Ok("註冊成功"); //200
             }
             else
             {
-                return BadRequest("註冊失敗"); //400
+                return BadRequest("帳號已被註冊"); //400
             }
         }
         #endregion
@@ -54,10 +53,9 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         // POST: api/Members/Login
         [HttpPost]
         [Route("Login")] //http協定 
-        public async Task<ActionResult> Login(LoginResources LoginData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
+        public async Task<ActionResult> Login([FromBody]LoginResources LoginData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
         {
-            var userDTO = this._mapper.Map<LoginResources, UserModel>(LoginData);//AutoMap<欲修改>(來源) 連到Profile檔的設置 註5
-            if (await this._MembersDBService.LoginCheckAsync(userDTO))
+            if (await this._MembersDBService.LoginCheckAsync(LoginData))
             {
                 return Ok("登入成功");
             }

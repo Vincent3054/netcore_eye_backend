@@ -19,44 +19,18 @@ namespace project.Services
     {
         private readonly MyContext _DBContext; //全域變數
         private readonly IMapper _mapper;//AutoMap
-        public MembersDBService(IMapper mapper,MyContext DBContext)
+        public MembersDBService(IMapper mapper, MyContext DBContext)
         {
             this._mapper = mapper;
             this._DBContext = DBContext;
         }
 
-        #region 登入
-
-        public async Task<bool> LoginCheckAsync(UserModel logindata)
-        {
-            //根據帳號去查會員資料
-            UserModel LoginMember = await GetMemberByAccountAsync(logindata.Account);
-            //判斷是否有此帳號
-            if (LoginMember.Account != null)//如果有這個帳號
-            {
-                //進行密碼確認
-                if (LoginMember.Password.Equals(HashPassword(logindata.Password)))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-        #endregion
         #region 註冊會員
-        public async Task<bool> RegisterAsync(RegisterResources newUser) //回傳值 <bool>
+        public async Task<bool> RegisterAsync(RegisterResources newRegister) //回傳值 <bool>
         {
-             var userDTO = this._mapper.Map<RegisterResources,UserModel>(newUser);//AutoMap<來源,欲修改>(來源)連到Profile檔的設置
-
+            var userDTO = this._mapper.Map<RegisterResources, UserModel>(newRegister);//AutoMap<來源,欲修改>(來源)連到Profile檔的設置
             //根據帳號去查會員資料
-            // UserModel RegisteMember =await GetMemberByAccountAsync(userDTO.Account);
+            // UserModel Member = await GetMemberByAccountAsync(userDTO.Account);
             //判斷此帳號使否已被註冊
             if (await GetMemberByAccountAsync(userDTO.Account)== null)//如果沒有這個號資料
             {
@@ -80,7 +54,33 @@ namespace project.Services
             }
 
         }
-        #endregion 
+        #endregion
+        
+        #region 登入
+        public async Task<bool> LoginCheckAsync(LoginResources newLogin)
+        {
+            var userDTO = this._mapper.Map<LoginResources, UserModel>(newLogin);
+            //根據帳號去查會員資料
+            UserModel Member = await GetMemberByAccountAsync(userDTO.Account);
+            //判斷是否有此帳號
+            if (Member.Account!= null)//如果有這個帳號
+            {
+                //進行密碼確認
+                if (Member.Password.Equals(HashPassword(userDTO.Password)))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        #endregion
 
         #region 藉由帳號取得單筆會員資料
         public async Task<UserModel> GetMemberByAccountAsync(string Account)
@@ -137,7 +137,7 @@ namespace project.Services
             {
                 UserModel User = await this._DBContext.User
                                .Where(b => b.Account == Account)
-                               .FirstOrDefaultAsync();                
+                               .FirstOrDefaultAsync();
                 this._DBContext.Remove(User);
                 await this._DBContext.SaveChangesAsync();
                 return true;
@@ -173,20 +173,19 @@ namespace project.Services
         //產生GUID
         public async Task<string> GetGUIDAsync()
         {
-            // 判斷guid有無被重複使用 
             try
             {
                 UserModel Member = new UserModel();
-                String A;
-                do
+                String checkGuid;
+                do// 產生沒有重複使用的GUID
                 {
                     Guid Id = Guid.NewGuid();
-                    A = Id.ToString();
+                    checkGuid = Id.ToString();
                     Member = await this._DBContext.User
-                                 .Where(b => b.M_Id == A)
+                                 .Where(b => b.M_Id == checkGuid)
                                  .FirstOrDefaultAsync();
                 } while (Member != null);
-                return A;
+                return checkGuid;
             }
             catch (DbUpdateException e)
             {
