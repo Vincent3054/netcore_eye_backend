@@ -32,7 +32,7 @@ namespace project.Services
             //根據帳號去查會員資料
             // UserModel Member = await GetMemberByAccountAsync(userDTO.Account);
             //判斷此帳號使否已被註冊
-            if (await GetMemberByAccountAsync(userDTO.Account)== null)//如果沒有這個號資料
+            if (await GetMemberByAccountAsync(userDTO.Account) == null)//如果沒有這個號資料
             {
                 try
                 {
@@ -55,7 +55,7 @@ namespace project.Services
 
         }
         #endregion
-        
+
         #region 登入
         public async Task<bool> LoginCheckAsync(LoginResources newLogin)
         {
@@ -63,7 +63,7 @@ namespace project.Services
             //根據帳號去查會員資料
             UserModel Member = await GetMemberByAccountAsync(userDTO.Account);
             //判斷是否有此帳號
-            if (Member.Account!= null)//如果有這個帳號
+            if (Member.Account != null)//如果有這個帳號
             {
                 //進行密碼確認
                 if (Member.Password.Equals(HashPassword(userDTO.Password)))
@@ -97,10 +97,15 @@ namespace project.Services
             }
 
         }
+
+        internal Task<UserModel> GetMemberByAccountAsync()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region 取得所有會員資料
-        public async Task<List<UserModel>> GetMember()//回傳多個List(用UserModel型態)
+        public async Task<List<UserModel>> GetMemberAsync()//回傳多個List(用UserModel型態)
         {
             try
             {
@@ -113,15 +118,18 @@ namespace project.Services
         }
         #endregion
 
-        #region 修改會員 (?)
-        public async Task PutMember(UserModel UpData)
+        #region 修改會員
+        public async Task<bool> EditMemberAsync(EditResources newEdit,string Account)
         {
             try
             {
-                // UserModel editdata = await this._DBContext.User.Where(p => p.Account == UpData.Account).FirstAsync();
+                var oriUser = this._DBContext.User.Single(x => x.Account == Account);
+                _DBContext.Entry(oriUser).CurrentValues.SetValues(newEdit);
+                // UserModel editdata = await this._DBContext.User.Where(p => p.Account == Account).FirstAsync();
                 // this._DBContext.Update(editdata);
-                this._DBContext.Update(UpData);
+                //this._DBContext.Update(newEdit);
                 await this._DBContext.SaveChangesAsync();
+                return true;
             }
             catch (DbUpdateException e)
             {
@@ -131,21 +139,29 @@ namespace project.Services
         #endregion
 
         #region 刪除會員
-        public async Task<bool> DeleteMember(string Account) //不回傳值
+        public async Task<bool> DeleteMemberAsync(string Account)
         {
-            try
+            if (await GetMemberByAccountAsync(Account) != null)//如果有這個帳號
             {
-                UserModel User = await this._DBContext.User
-                               .Where(b => b.Account == Account)
-                               .FirstOrDefaultAsync();
-                this._DBContext.Remove(User);
-                await this._DBContext.SaveChangesAsync();
-                return true;
+                try
+                {
+                    UserModel User = await this._DBContext.User
+                                .Where(b => b.Account == Account)
+                                .FirstOrDefaultAsync();
+                    this._DBContext.Remove(User);
+                    await this._DBContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (DbUpdateException e)
+                {
+                    throw new DbUpdateException(e.Message.ToString());
+                }
             }
-            catch (DbUpdateException e)
+            else
             {
-                throw new DbUpdateException(e.Message.ToString());
+                return false;
             }
+
         }
         #endregion
 

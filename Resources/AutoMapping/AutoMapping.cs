@@ -11,9 +11,12 @@ namespace project.Resources
         public AutoMapping()
         {
             //<前,後>前要轉成後面的，<來源,欲修改> 
-            CreateMap<RegisterResources, UserModel>();
-            CreateMap<LoginResources, UserModel>(); 
-            CreateMap<UserModel,MembersAllResources>();
+            #region  Members (UserModel)
+            CreateMap<RegisterResources, UserModel>();//Register
+            CreateMap<LoginResources, UserModel>();//Login
+            CreateMap<UserModel, MembersAllResources>();//GetMembers
+            CreateMap<EditResources, UserModel>();
+            #endregion
 
         }
     }
