@@ -36,7 +36,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         #region 註冊
         // POST: api/Members/Register
         [HttpPost("Register")] //http協定 
-        public async Task<ActionResult> Register([FromBody] RegisterResources RegisterData) //同步異步寫法 註3，Webapi裡面的ViewModel是Resources 註4
+        public async Task<ActionResult> Register([FromBody]RegisterResources RegisterData) //同步異步寫法 註3，Webapi裡面的ViewModel是Resources 註4
         {
             //controller越乾淨越好，把AutoMap移到Service
             if (await this._MembersDBService.RegisterAsync(RegisterData))//呼叫function到Service並把原始資料傳過去
@@ -73,9 +73,8 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         {
             try
             {
-                List<UserModel> GetMembersData = await this._MembersDBService.GetMemberAsync();
-                var userDTO = this._mapper.Map<List<UserModel>, List<MembersAllResources>>(GetMembersData);
-                return Ok(userDTO);
+                // List<UserModel> GetMembersData =;
+                return Ok(await this._MembersDBService.GetMemberAsync());
             }
             catch
             {
@@ -149,6 +148,8 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
 
         }
         #endregion
+        //忘記密碼>修改密碼
+        
     }
 
 }
@@ -175,6 +176,8 @@ ActionResult
         加密那些都寫在Services
 
         DI注入 DB、AutoMap、Service
+        [FromBody] post
+        [FromQuery] put
 */
 /*參考程式碼
     public Task<ActionResult> PostAsync(UserModel user)

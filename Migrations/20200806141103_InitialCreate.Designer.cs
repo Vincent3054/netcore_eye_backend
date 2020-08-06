@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace project.Migrations
 {
     [DbContext(typeof(MyContext))]
-    [Migration("20200731085708_InitialCreate")]
+    [Migration("20200806141103_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace project.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("MyWebsite.AnalysisLogModel", b =>
+            modelBuilder.Entity("Models.AnalysisLogModel", b =>
                 {
                     b.Property<string>("A_Id")
                         .HasColumnType("varchar(50)");
@@ -50,14 +50,14 @@ namespace project.Migrations
                         new
                         {
                             A_Id = "1",
-                            AnalysisTime = new DateTime(2020, 7, 31, 16, 57, 7, 745, DateTimeKind.Local).AddTicks(4470),
+                            AnalysisTime = new DateTime(2020, 8, 6, 22, 11, 2, 947, DateTimeKind.Local).AddTicks(1280),
                             B_Id = "1",
                             Image = "https://i.imgur.com/PuC21Ma.png",
                             M_Id = "1"
                         });
                 });
 
-            modelBuilder.Entity("MyWebsite.AnalysisStatusModel", b =>
+            modelBuilder.Entity("Models.AnalysisStatusModel", b =>
                 {
                     b.Property<int>("AS_Id")
                         .ValueGeneratedOnAdd()
@@ -87,7 +87,7 @@ namespace project.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyWebsite.BeforeAnalysisLogModel", b =>
+            modelBuilder.Entity("Models.BeforeAnalysisLogModel", b =>
                 {
                     b.Property<string>("B_Id")
                         .HasColumnType("varchar(50)");
@@ -107,11 +107,11 @@ namespace project.Migrations
                         {
                             B_Id = "1",
                             RawImage = "https://i.imgur.com/cfeJ9j7.png",
-                            RawTime = new DateTime(2020, 7, 31, 16, 57, 7, 747, DateTimeKind.Local).AddTicks(8309)
+                            RawTime = new DateTime(2020, 8, 6, 22, 11, 2, 949, DateTimeKind.Local).AddTicks(4226)
                         });
                 });
 
-            modelBuilder.Entity("MyWebsite.StatusModel", b =>
+            modelBuilder.Entity("Models.StatusModel", b =>
                 {
                     b.Property<string>("S_Id")
                         .HasColumnType("varchar(50)");
@@ -135,7 +135,7 @@ namespace project.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyWebsite.UserModel", b =>
+            modelBuilder.Entity("Models.UserModel", b =>
                 {
                     b.Property<string>("M_Id")
                         .HasColumnType("varchar(50)");
@@ -173,8 +173,8 @@ namespace project.Migrations
                         {
                             M_Id = "1",
                             Account = "admin001",
-                            BirthDate = new DateTime(2020, 7, 31, 16, 57, 7, 733, DateTimeKind.Local).AddTicks(1485),
-                            CreateTime = new DateTime(2020, 7, 31, 16, 57, 7, 735, DateTimeKind.Local).AddTicks(7877),
+                            BirthDate = new DateTime(2020, 8, 6, 22, 11, 2, 937, DateTimeKind.Local).AddTicks(1227),
+                            CreateTime = new DateTime(2020, 8, 6, 22, 11, 2, 937, DateTimeKind.Local).AddTicks(9601),
                             Email = "ok96305@gmail.com",
                             Name = "陳建成",
                             Password = "12345",
@@ -183,24 +183,24 @@ namespace project.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyWebsite.AnalysisLogModel", b =>
+            modelBuilder.Entity("Models.AnalysisLogModel", b =>
                 {
-                    b.HasOne("MyWebsite.BeforeAnalysisLogModel", "TheBeforeAnalysisLogModel")
+                    b.HasOne("Models.BeforeAnalysisLogModel", "TheBeforeAnalysisLogModel")
                         .WithMany("AnalysisLog")
                         .HasForeignKey("B_Id");
 
-                    b.HasOne("MyWebsite.UserModel", "TheUser")
+                    b.HasOne("Models.UserModel", "TheUser")
                         .WithMany("AnalysisLog")
                         .HasForeignKey("M_Id");
                 });
 
-            modelBuilder.Entity("MyWebsite.AnalysisStatusModel", b =>
+            modelBuilder.Entity("Models.AnalysisStatusModel", b =>
                 {
-                    b.HasOne("MyWebsite.AnalysisLogModel", "TheAnalysisLog")
+                    b.HasOne("Models.AnalysisLogModel", "TheAnalysisLog")
                         .WithMany("AnalysisStatus")
                         .HasForeignKey("A_Id");
 
-                    b.HasOne("MyWebsite.StatusModel", "TheStatus")
+                    b.HasOne("Models.StatusModel", "TheStatus")
                         .WithMany("AnalysisStatus")
                         .HasForeignKey("S_Id");
                 });

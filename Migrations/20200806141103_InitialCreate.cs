@@ -108,7 +108,7 @@ namespace project.Migrations
             migrationBuilder.InsertData(
                 table: "BeforeAnalysisLog",
                 columns: new[] { "B_Id", "RawImage", "RawTime" },
-                values: new object[] { "1", "https://i.imgur.com/cfeJ9j7.png", new DateTime(2020, 7, 31, 16, 57, 7, 747, DateTimeKind.Local).AddTicks(8309) });
+                values: new object[] { "1", "https://i.imgur.com/cfeJ9j7.png", new DateTime(2020, 8, 6, 22, 11, 2, 949, DateTimeKind.Local).AddTicks(4226) });
 
             migrationBuilder.InsertData(
                 table: "Status",
@@ -118,12 +118,12 @@ namespace project.Migrations
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "M_Id", "Account", "BirthDate", "CreateTime", "Email", "Name", "Password", "Role", "Sex" },
-                values: new object[] { "1", "admin001", new DateTime(2020, 7, 31, 16, 57, 7, 733, DateTimeKind.Local).AddTicks(1485), new DateTime(2020, 7, 31, 16, 57, 7, 735, DateTimeKind.Local).AddTicks(7877), "ok96305@gmail.com", "陳建成", "12345", true, "男" });
+                values: new object[] { "1", "admin001", new DateTime(2020, 8, 6, 22, 11, 2, 937, DateTimeKind.Local).AddTicks(1227), new DateTime(2020, 8, 6, 22, 11, 2, 937, DateTimeKind.Local).AddTicks(9601), "ok96305@gmail.com", "陳建成", "12345", true, "男" });
 
             migrationBuilder.InsertData(
                 table: "AnalysisLog",
                 columns: new[] { "A_Id", "AnalysisTime", "B_Id", "Image", "M_Id" },
-                values: new object[] { "1", new DateTime(2020, 7, 31, 16, 57, 7, 745, DateTimeKind.Local).AddTicks(4470), "1", "https://i.imgur.com/PuC21Ma.png", "1" });
+                values: new object[] { "1", new DateTime(2020, 8, 6, 22, 11, 2, 947, DateTimeKind.Local).AddTicks(1280), "1", "https://i.imgur.com/PuC21Ma.png", "1" });
 
             migrationBuilder.InsertData(
                 table: "AnalysisStatus",

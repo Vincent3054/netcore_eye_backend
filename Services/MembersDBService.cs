@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models;
 using project.Resources.Request;
+using project.Resources.Response;
+
 
 namespace project.Services
 {
@@ -28,7 +30,7 @@ namespace project.Services
         #region 註冊會員
         public async Task<bool> RegisterAsync(RegisterResources newRegister) //回傳值 <bool>
         {
-            var userDTO = this._mapper.Map<RegisterResources, UserModel>(newRegister);//AutoMap<來源,欲修改>(來源)連到Profile檔的設置
+            var userDTO = this._mapper.Map<RegisterResources,UserModel>(newRegister);//AutoMap<來源,欲修改>(來源)連到Profile檔的設置
             //根據帳號去查會員資料
             // UserModel Member = await GetMemberByAccountAsync(userDTO.Account);
             //判斷此帳號使否已被註冊
@@ -95,21 +97,20 @@ namespace project.Services
             {
                 throw new DbUpdateException(e.Message.ToString());
             }
-
-        }
-
-        internal Task<UserModel> GetMemberByAccountAsync()
-        {
-            throw new NotImplementedException();
         }
         #endregion
 
         #region 取得所有會員資料
-        public async Task<List<UserModel>> GetMemberAsync()//回傳多個List(用UserModel型態)
+        public async Task<List<MembersAllResources>> GetMemberAsync()//回傳多個List(用UserModel型態)
         {
             try
             {
-                return await this._DBContext.User.ToListAsync(); //查全部
+                List<UserModel>  Member=  await this._DBContext.User.ToListAsync();
+               
+                var userDTO = this._mapper.Map<List<UserModel>, List<MembersAllResources>>(Member);
+
+
+                return  userDTO; //查全部
             }
             catch (DbUpdateException e)
             {
