@@ -14,17 +14,17 @@ using Models;
 using project.Resources.Request;
 using project.Resources.Response;
 
-
 namespace project.Services
 {
     public class MembersDBService
     {
         private readonly MyContext _DBContext; //全域變數
         private readonly IMapper _mapper;//AutoMap
+
         public MembersDBService(IMapper mapper, MyContext DBContext)
         {
             this._mapper = mapper;
-            this._DBContext = DBContext;
+            this._DBContext = DBContext  ;
         }
 
         #region 註冊會員

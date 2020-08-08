@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using DBContext;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -12,6 +13,8 @@ using project.Resources;
 using project.Resources.Request;
 using project.Resources.Response;
 using project.Services;
+using Utils;
+
 namespace project.Controllers //用namespace包起來 project(檔名.現在的資料夾) using的時候方便看到
 {
     [ApiController]//web api 必加 (自動啟用回傳400功能、和自動套用[FromBody]等屬性) 註1
@@ -22,12 +25,15 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         //宣告全域變數
         private readonly MyContext _DBContext;//DB  
         private readonly IMapper _mapper;//AutoMap
+        private readonly JwtHelpers _jwt;
         private readonly MembersDBService _MembersDBService;//Service
 
-        public MembersController(IMapper mapper, MyContext DBContext) //建構子
+
+        public MembersController(IMapper mapper, MyContext DBContext,JwtHelpers jwt) //建構子
         {
             this._mapper = mapper;
             this._DBContext = DBContext;
+            this._jwt = jwt;
             //Service建議用DI注入的方式 但因為本系統架構不大所以先用new的方式 註2
             this._MembersDBService = new MembersDBService(_mapper, _DBContext);
         }
@@ -57,15 +63,15 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         {
             if (await this._MembersDBService.LoginCheckAsync(LoginData)) //*沒有查到帳號會出現問題
             {
-                return Ok("登入成功");
+                return  Ok(this._jwt.GenerateToken(LoginData.Account));
             }
             else
             {
-                return BadRequest("登入失敗");
+                return  BadRequest("登入失敗");
             }
         }
         #endregion
-
+ 
         #region 顯示會員資料列
         // GET: api/Members/All
         [HttpGet("All")]
@@ -100,9 +106,10 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             }
         }
         #endregion
-
+           
         #region 刪除會員
         // Delete: api/Members/Delete/{Account}
+        [Authorize]
         [HttpDelete("Delete/{Account}")]
         public async Task<ActionResult> DeleteMember(string Account)
         {

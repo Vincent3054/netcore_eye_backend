@@ -18,6 +18,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
+using Utils;
 
 namespace project
 {
@@ -52,15 +53,25 @@ namespace project
                 // 設定 JWT Bearer Token 的檢查選項
                 .AddJwtBearer(options =>
                 {
+                    // 當驗證失敗時，回應標頭會包含 WWW-Authenticate 標頭，這裡會顯示失敗的詳細錯誤原因
+                    options.IncludeErrorDetails = true; // 預設值為 true，有時會特別關閉
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
+                        // 透過這項宣告，就可以從 "sub" 取值並設定給 User.Identity.Name
+                        NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        // 透過這項宣告，就可以從 "roles" 取值，並可讓 [Authorize] 判斷角色
+                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                        // 一般我們都會驗證 Issuer
                         ValidateIssuer = true, //發行者驗證
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidateAudience = true,//接收者驗證
-                        ValidAudience = Configuration["Jwt:Issuer"],
+                        ValidIssuer = Configuration.GetValue<string>("JwtSettings:Issuer"),
+                        // 通常不太需要驗證 Audience
+                        ValidateAudience = false,//接收者驗證
+                        //ValidAudience = "JwtAuthDemo", // 不驗證就不需要填寫
+                        // 一般我們都會驗證 Token 的有效期間
                         ValidateLifetime = true, //存活時間驗證
-                        ValidateIssuerSigningKey = true, //金鑰驗證
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                        // 如果 Token 中包含 key 才需要驗證，一般都只有簽章而已
+                        ValidateIssuerSigningKey = false, //金鑰驗證
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SignKey"]))
                     };
                 });
             //引入Controllers回傳格式為json檔
@@ -76,6 +87,7 @@ namespace project
             });
             //用來接前端的資料 mvc之前自動寫好了 這邊要設定
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<JwtHelpers>();
 
             //自動產生API文件的差件
             services.AddSwaggerGen();
