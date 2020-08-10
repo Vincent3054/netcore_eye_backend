@@ -103,23 +103,26 @@ namespace project
             {
                 app.UseDeveloperExceptionPage();
             }
-            //建立資料庫的連接
-            dbContext.Database.EnsureCreated();
-            
-            //ROUT的東西
-            app.UseRouting();
             //跨域
             app.UseCors("AnotherPolicy");
+            //建立資料庫的連接
+            dbContext.Database.EnsureCreated();
+            app.UseHttpsRedirection();//HTTP導向HTTPS
+            //ROUT的東西
+            app.UseRouting();
+            
+            
+            // STEP2: 使用驗證權限的 Middleware
+            //app.UseAuthentication();//先驗證
+            app.UseAuthorization();//再授權
+            
             //Swagger
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
-            // STEP2: 使用驗證權限的 Middleware
-            app.UseAuthentication();//先驗證
-            app.UseAuthorization();//再授權
-            app.UseHttpsRedirection();//HTTP導向HTTPS
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();//MVC
