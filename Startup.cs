@@ -58,19 +58,19 @@ namespace project
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         // 透過這項宣告，就可以從 "sub" 取值並設定給 User.Identity.Name
-                        NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                        // NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                         // 透過這項宣告，就可以從 "roles" 取值，並可讓 [Authorize] 判斷角色
-                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                        // RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
                         // 一般我們都會驗證 Issuer
                         ValidateIssuer = true, //發行者驗證
                         ValidIssuer = Configuration.GetValue<string>("JwtSettings:Issuer"),
                         // 通常不太需要驗證 Audience
-                        ValidateAudience = false,//接收者驗證
-                        //ValidAudience = "JwtAuthDemo", // 不驗證就不需要填寫
+                        ValidateAudience = true,//接收者驗證
+                        ValidAudience = "JwtAuthDemo", // 不驗證就不需要填寫
                         // 一般我們都會驗證 Token 的有效期間
                         ValidateLifetime = true, //存活時間驗證
                         // 如果 Token 中包含 key 才需要驗證，一般都只有簽章而已
-                        ValidateIssuerSigningKey = false, //金鑰驗證
+                        ValidateIssuerSigningKey = true, //金鑰驗證
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SignKey"]))
                     };
                 });
@@ -117,7 +117,8 @@ namespace project
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
             // STEP2: 使用驗證權限的 Middleware
-            app.UseAuthorization();//驗證
+            app.UseAuthentication();//先驗證
+            app.UseAuthorization();//再授權
             app.UseHttpsRedirection();//HTTP導向HTTPS
             app.UseEndpoints(endpoints =>
             {

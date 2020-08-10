@@ -27,6 +27,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         private readonly IMapper _mapper;//AutoMap
         private readonly JwtHelpers _jwt;
         private readonly MembersDBService _MembersDBService;//Service
+        private readonly MailService _MailService;
 
 
         public MembersController(IMapper mapper, MyContext DBContext, JwtHelpers jwt) //建構子
@@ -36,6 +37,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             this._jwt = jwt;
             //Service建議用DI注入的方式 但因為本系統架構不大所以先用new的方式 註2
             this._MembersDBService = new MembersDBService(_mapper, _DBContext);
+            this._MailService = new MailService();
         }
         #endregion
 
@@ -67,7 +69,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             }
             else
             {
-                return BadRequest("登入失敗");
+                return BadRequest(new { nessage = "帳號已被註冊" }); //400
             }
         }
         #endregion
@@ -159,7 +161,41 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         去收信(宣告URL 寄信的時候寄出 讓他可以連到修改密碼的API)
         修改密碼
         */
-        
+        #region 忘記密碼
+        [HttpPut("Froget")]
+        public async Task<ActionResult> FrogetPassword(FrogetPasswordResources FrogetPasswordDate) {
+            try
+            { 
+                string AuthCode = this._MailService.GetValidateCode();
+                if (await this._MembersDBService.ForgetPasswordCheckAsync(FrogetPasswordDate.Account, AuthCode))
+                {
+                    // string TempMail = System.IO.File.ReadAllText(
+                    // System.Web.Hosting.HostingEnvironment.MapPath("~/Email/ForgetPasswordEmail.html"));
+                    // //宣告Email驗證用的Url
+                    // string P = "http://localhost:8000/?#/ResetPassword?";
+                    // string account = Data.Account;
+                    // string authcode = AuthCode;
+                    // string Path = P + "Account=" + account + "&AuthCode=" + authcode;
+                    // string MailBody = mailService.GetRegisterMailBody(TempMail,
+                    //     Data.Account, Path, AuthCode);
+                    // mailService.SendRegisterMail(MailBody, Data.Email, false);
+                    return Ok("請去收驗證信重設密碼");
+                }
+                else
+                {
+                    FrogetPasswordDate.Account = null;
+                    FrogetPasswordDate.Email = null;
+                    return BadRequest("此帳號尚未經過驗證或是尚未註冊");
+                }
+
+
+            }
+            catch
+            {
+                return NotFound("發生錯誤");
+            }
+        }
+        #endregion
 
     }
 

@@ -211,6 +211,32 @@ namespace project.Services
         }
         #endregion
 
+        #region 忘記密碼
+        public async Task<bool> ForgetPasswordCheckAsync(string Account, string AuthCode)
+        {
+            UserModel Member = await GetMemberByAccountAsync(Account);
+            bool result = (Member != null);
+            if (result)
+            {
+                // string sql = $@"UPDATE member set AuthCode='{AuthCode}' WHERE Account='{Account}';";
+                // try
+                // {
+                //     conn.Open();
+                //     SqlCommand cmd = new SqlCommand(sql, conn);
+                //     cmd.ExecuteNonQuery();
+                // }
+                // catch (Exception e)
+                // {
+                //     throw new Exception(e.Message.ToString());
+                // }
+                // finally
+                // {
+                //     conn.Close();
+                // }
+            }
+            return result;
+        }
+        #endregion
         // #region 確認帳號是否已被使用
         // public async Task<bool> AccountCheck(string Account)
         // {
