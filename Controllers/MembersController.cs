@@ -29,7 +29,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         private readonly MembersDBService _MembersDBService;//Service
 
 
-        public MembersController(IMapper mapper, MyContext DBContext,JwtHelpers jwt) //建構子
+        public MembersController(IMapper mapper, MyContext DBContext, JwtHelpers jwt) //建構子
         {
             this._mapper = mapper;
             this._DBContext = DBContext;
@@ -42,7 +42,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         #region 註冊
         // POST: api/Members/Register
         [HttpPost("Register")] //http協定 
-        public async Task<ActionResult> Register([FromBody]RegisterResources RegisterData) //同步異步寫法 註3，Webapi裡面的ViewModel是Resources 註4
+        public async Task<ActionResult> Register([FromBody] RegisterResources RegisterData) //同步異步寫法 註3，Webapi裡面的ViewModel是Resources 註4
         {
             //controller越乾淨越好，把AutoMap移到Service
             if (await this._MembersDBService.RegisterAsync(RegisterData))//呼叫function到Service並把原始資料傳過去
@@ -63,15 +63,15 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         {
             if (await this._MembersDBService.LoginCheckAsync(LoginData)) //*沒有查到帳號會出現問題
             {
-                return  Ok(this._jwt.GenerateToken(LoginData.Account));
+                return Ok(this._jwt.GenerateToken(LoginData.Account));
             }
             else
             {
-                return  BadRequest("登入失敗");
+                return BadRequest("登入失敗");
             }
         }
         #endregion
- 
+
         #region 顯示會員資料列
         // GET: api/Members/All
         [HttpGet("All")]
@@ -79,7 +79,6 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         {
             try
             {
-                // List<UserModel> GetMembersData =;
                 return Ok(await this._MembersDBService.GetMemberAsync());
             }
             catch
@@ -106,7 +105,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             }
         }
         #endregion
-           
+
         #region 刪除會員
         // Delete: api/Members/Delete/{Account}
         [Authorize]
@@ -135,11 +134,11 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         #region 修改會員
         // Delete: api/Members/Edit/{Account}
         [HttpPut("Edit/{Account}")]
-        public async Task<ActionResult> EditMember(string Account,EditResources EditData)
+        public async Task<ActionResult> EditMember(string Account, EditResources EditData)
         {
             try
             {
-                if (await this._MembersDBService.EditMemberAsync(EditData,Account))
+                if (await this._MembersDBService.EditMemberAsync(EditData, Account))
                 {
                     return Ok("修改成功");
                 }
@@ -155,8 +154,13 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
 
         }
         #endregion
-        //忘記密碼>修改密碼
+        /*
+        忘記密碼(信箱 帳號)
+        去收信(宣告URL 寄信的時候寄出 讓他可以連到修改密碼的API)
+        修改密碼
+        */
         
+
     }
 
 }
