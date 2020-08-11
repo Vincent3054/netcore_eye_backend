@@ -36,6 +36,9 @@ namespace Models
         //建立日期
         [Column(TypeName = "datetime")]
         public DateTime CreateTime { get; set; }
+        //驗證碼
+        [Column(TypeName = "varchar(50)")]
+        public string AuthCode{get;set;}
         public virtual ICollection<AnalysisLogModel> AnalysisLog { get; set; }
 
     }

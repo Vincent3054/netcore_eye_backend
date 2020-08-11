@@ -214,27 +214,87 @@ namespace project.Services
         #region 忘記密碼
         public async Task<bool> ForgetPasswordCheckAsync(string Account, string AuthCode)
         {
-            UserModel Member = await GetMemberByAccountAsync(Account);
-            bool result = (Member != null);
-            if (result)
+            UserModel Member = await GetMemberByAccountAsync(Account);//判斷是否有此帳號
+            if (Member != null)//如果有這個帳號
             {
-                // string sql = $@"UPDATE member set AuthCode='{AuthCode}' WHERE Account='{Account}';";
-                // try
-                // {
-                //     conn.Open();
-                //     SqlCommand cmd = new SqlCommand(sql, conn);
-                //     cmd.ExecuteNonQuery();
-                // }
-                // catch (Exception e)
-                // {
-                //     throw new Exception(e.Message.ToString());
-                // }
-                // finally
-                // {
-                //     conn.Close();
-                // }
+                try
+                {
+                    var oriUser = this._DBContext.User.Single(x => x.Account == Account);
+                    oriUser.AuthCode = AuthCode;//把驗證碼傳入這個會員的資料裡
+                    await this._DBContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (DbUpdateException e)
+                {
+                    throw new DbUpdateException(e.Message.ToString());
+                }
             }
-            return result;
+            else
+            {
+                return false;
+            }
+        }
+        #endregion
+        #region 寄信驗證
+        public async Task<string> EmailValidate(string Account, string AuthCode)
+        {
+            string ValidateStr = string.Empty; //宣告空字串    
+            UserModel ValidateMember = await GetMemberByAccountAsync(Account);//根據帳號去查會員資料
+            if (ValidateMember != null)//如果有這個帳號
+            {
+                if (ValidateMember.AuthCode == AuthCode)//判斷傳入驗證碼與資料庫中是否相同
+                {
+                    ValidateStr = "";
+                }
+                else
+                {
+                    ValidateStr = "驗證碼錯誤，請重新確認或再註冊";
+                }
+            }
+            else
+            {
+                ValidateStr = "傳送資料錯誤，請重新確認或再註冊";
+            }
+            //回傳驗證訊息
+            return ValidateStr;
+        }
+        #endregion
+        #region 重設密碼
+        public async Task<string> ResetPassword(string Account, string AuthCode, string NewPassword, string NewPasswordCheck)
+        {
+            string DateStr = string.Empty;//宣告空字串 
+
+            if (NewPassword == NewPasswordCheck)//確認密碼相同
+            {
+                NewPassword = HashPassword(NewPassword);//hash新密碼
+                UserModel Data = await GetMemberByAccountAsync(Account);//根據帳號去查會員資料
+                if (AuthCode == Data.AuthCode)//確認驗證碼
+                {
+                    try
+                    {
+                        var oriUser = this._DBContext.User.Single(x => x.Account == Account);
+                        oriUser.AuthCode = string.Empty;//把驗證碼欄位改為空字串(代表這個帳號沒有通過驗證)
+                        oriUser.Password = NewPassword;//修改新密碼
+                        await this._DBContext.SaveChangesAsync();
+                        DateStr = "";
+                    }
+                    catch (DbUpdateException e)
+                    {
+                        throw new DbUpdateException(e.Message.ToString());
+                    }
+                }
+                else
+                {
+                    DateStr = "驗證碼錯誤，請重新確認";
+                }
+            }
+            else
+            {
+                DateStr = "密碼確認錯誤，請重新確認";
+            }
+            return DateStr;
+
+
         }
         #endregion
         // #region 確認帳號是否已被使用

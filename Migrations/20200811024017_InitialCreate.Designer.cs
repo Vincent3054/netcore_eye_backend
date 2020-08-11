@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace project.Migrations
 {
     [DbContext(typeof(MyContext))]
-    [Migration("20200806141103_InitialCreate")]
+    [Migration("20200811024017_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,7 +50,7 @@ namespace project.Migrations
                         new
                         {
                             A_Id = "1",
-                            AnalysisTime = new DateTime(2020, 8, 6, 22, 11, 2, 947, DateTimeKind.Local).AddTicks(1280),
+                            AnalysisTime = new DateTime(2020, 8, 11, 10, 40, 17, 308, DateTimeKind.Local).AddTicks(4981),
                             B_Id = "1",
                             Image = "https://i.imgur.com/PuC21Ma.png",
                             M_Id = "1"
@@ -107,7 +107,7 @@ namespace project.Migrations
                         {
                             B_Id = "1",
                             RawImage = "https://i.imgur.com/cfeJ9j7.png",
-                            RawTime = new DateTime(2020, 8, 6, 22, 11, 2, 949, DateTimeKind.Local).AddTicks(4226)
+                            RawTime = new DateTime(2020, 8, 11, 10, 40, 17, 310, DateTimeKind.Local).AddTicks(8539)
                         });
                 });
 
@@ -143,6 +143,9 @@ namespace project.Migrations
                     b.Property<string>("Account")
                         .HasColumnType("varchar(30)");
 
+                    b.Property<string>("AuthCode")
+                        .HasColumnType("varchar(50)");
+
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime");
 
@@ -173,8 +176,9 @@ namespace project.Migrations
                         {
                             M_Id = "1",
                             Account = "admin001",
-                            BirthDate = new DateTime(2020, 8, 6, 22, 11, 2, 937, DateTimeKind.Local).AddTicks(1227),
-                            CreateTime = new DateTime(2020, 8, 6, 22, 11, 2, 937, DateTimeKind.Local).AddTicks(9601),
+                            AuthCode = "",
+                            BirthDate = new DateTime(2020, 8, 11, 10, 40, 17, 296, DateTimeKind.Local).AddTicks(377),
+                            CreateTime = new DateTime(2020, 8, 11, 10, 40, 17, 298, DateTimeKind.Local).AddTicks(6566),
                             Email = "ok96305@gmail.com",
                             Name = "陳建成",
                             Password = "12345",

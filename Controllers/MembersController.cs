@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DBContext;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -28,13 +29,14 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         private readonly JwtHelpers _jwt;
         private readonly MembersDBService _MembersDBService;//Service
         private readonly MailService _MailService;
+        private readonly IWebHostEnvironment _env; //註6 取得網站根目錄功能
 
-
-        public MembersController(IMapper mapper, MyContext DBContext, JwtHelpers jwt) //建構子
+        public MembersController(IMapper mapper, MyContext DBContext, JwtHelpers jwt, IWebHostEnvironment env) //建構子
         {
             this._mapper = mapper;
             this._DBContext = DBContext;
             this._jwt = jwt;
+            this._env = env;
             //Service建議用DI注入的方式 但因為本系統架構不大所以先用new的方式 註2
             this._MembersDBService = new MembersDBService(_mapper, _DBContext);
             this._MailService = new MailService();
@@ -156,47 +158,100 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
 
         }
         #endregion
-        /*
-        忘記密碼(信箱 帳號)
-        去收信(宣告URL 寄信的時候寄出 讓他可以連到修改密碼的API)
-        修改密碼
+
+        #region 重設密碼系列
+        /*  說明
+            1.忘記密碼 ( 把驗證碼更新進去會員資料  在去寄信)
+            2.接收驗證信 (去信箱收信 點擊信內容的URL POST從網址帶來的值 帳號、驗證碼 去做驗證)
+            3.重設密碼 ( 驗證成功後把驗證碼的值清空 在重設密碼)
         */
-        #region 忘記密碼
-        [HttpPut("Froget")]
-        public async Task<ActionResult> FrogetPassword(FrogetPasswordResources FrogetPasswordDate) {
+
+        // 忘記密碼
+        [HttpPut("ResetPassword1")]
+        public async Task<ActionResult> FrogetPassword(FrogetPasswordResources FPDate)
+        {
             try
-            { 
+            {
+                //產生驗證碼
                 string AuthCode = this._MailService.GetValidateCode();
-                if (await this._MembersDBService.ForgetPasswordCheckAsync(FrogetPasswordDate.Account, AuthCode))
+                //判斷有無此帳號，並把驗證碼傳入到會員個人資料裡
+                if (await this._MembersDBService.ForgetPasswordCheckAsync(FPDate.Account, AuthCode))
                 {
-                    // string TempMail = System.IO.File.ReadAllText(
-                    // System.Web.Hosting.HostingEnvironment.MapPath("~/Email/ForgetPasswordEmail.html"));
-                    // //宣告Email驗證用的Url
-                    // string P = "http://localhost:8000/?#/ResetPassword?";
-                    // string account = Data.Account;
-                    // string authcode = AuthCode;
-                    // string Path = P + "Account=" + account + "&AuthCode=" + authcode;
-                    // string MailBody = mailService.GetRegisterMailBody(TempMail,
-                    //     Data.Account, Path, AuthCode);
-                    // mailService.SendRegisterMail(MailBody, Data.Email, false);
+                    //設定寄信內容範本路徑
+                    string EmailUrl = "/Email/ForgetPasswordEmail.html";
+                    string TempMail = System.IO.File.ReadAllText(this._env.WebRootPath + EmailUrl);//取得wwwwoor根目錄 註6
+                    //宣告Email驗證用的Url
+                    string P = "http://localhost:8000/?#/ResetPassword?";
+                    string account = FPDate.Account;
+                    string authcode = AuthCode;
+                    string Path = P + "Account=" + account + "&AuthCode=" + authcode;
+                    //將驗證信內容的變數填入範本中
+                    string MailBody = this._MailService.GetRegisterMailBody(TempMail, FPDate.Account, Path, AuthCode);
+                    //寄送驗證信
+                    this._MailService.SendRegisterMail(MailBody, FPDate.Email, false);
                     return Ok("請去收驗證信重設密碼");
                 }
                 else
                 {
-                    FrogetPasswordDate.Account = null;
-                    FrogetPasswordDate.Email = null;
-                    return BadRequest("此帳號尚未經過驗證或是尚未註冊");
+                    FPDate.Account = null;
+                    FPDate.Email = null;
+                    return BadRequest("此帳號尚未註冊");
                 }
-
-
             }
-            catch
+            catch (DbUpdateException e)
             {
-                return NotFound("發生錯誤");
+                throw new DbUpdateException(e.Message.ToString());
             }
         }
-        #endregion
 
+
+        // 接收驗證信
+        [HttpPut("ResetPassword2")]
+        public async Task<ActionResult> EmailVaildate(EmailVaildateResources EVData)
+        {
+            try
+            {
+                string ValidateStr = await this._MembersDBService.EmailValidate(EVData.Account, EVData.AuthCode);
+                if (String.IsNullOrWhiteSpace(ValidateStr))
+                {
+                    return Ok("驗證成功");
+                }
+                else
+                {
+                    return BadRequest(ValidateStr);
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest("驗證失敗");
+            }
+        }
+
+
+        // 重設密碼
+        [HttpPut("ResetPassword3")]
+        public async Task<ActionResult> ResetPassword(ResetPasswordResources RPData)
+        {
+            try
+            {
+                string DateStr = await this._MembersDBService.ResetPassword(RPData.Account, RPData.AuthCode, RPData.NewPassword, RPData.NewPasswordCheck);
+                if (String.IsNullOrWhiteSpace(DateStr))
+                {
+                    return Ok("重設密碼成功");
+                }
+                else
+                {
+                    return BadRequest(DateStr);
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest("發生錯誤");
+            }
+        }
+
+
+        #endregion
     }
 
 }
@@ -244,6 +299,7 @@ ActionResult
            非同步寫法 (async、Task<>、await...)
                public async Task<IActionResult> MembersAsync(UserViewModel RegisterData){await...} 
     註4 ViewModel 一個頁面就會有一個viewModel 裡面放那個頁面需要用到的欄位
-    註5 https://ithelp.ithome.com.tw/articles/10157130     
+    註5 https://ithelp.ithome.com.tw/articles/10157130
+    註6 https://blog.johnwu.cc/article/ironman-day16-asp-net-core-multiple-environments.html
 */
 #endregion

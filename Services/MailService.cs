@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using AutoMapper;
 using DBContext;
+using Microsoft.EntityFrameworkCore;
 
 namespace project.Services
 {
@@ -37,7 +39,7 @@ namespace project.Services
         #region 將驗證信內容填入範本中
         public string GetRegisterMailBody(string TempString, string UserName, string ValidateUrl, string AuthCode)
         {
-            if (!string.IsNullOrEmpty(AuthCode))
+            if (!string.IsNullOrEmpty(AuthCode))//驗證碼目前是直接帶到網址上，範本內容沒有放，故沒影響
             {
                 TempString = TempString.Replace("{{AuthCode}}", AuthCode);
             }
@@ -51,28 +53,36 @@ namespace project.Services
         #region 寄送驗證信
         public void SendRegisterMail(string MailBody, string ToEmail, bool subject)
         {
-            //建立寄信用Smtp物件，這裡使用Gmail為例
-            SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
-            //設定使用的Port，這裡設定Gmail所使用的
-            SmtpServer.Port = 587;
-            //建立使用者憑據，這裡要設定您的Gmail帳戶
-            SmtpServer.Credentials = new System.Net.NetworkCredential(gmail_account, gmail_password);
-            //開啟SSL
-            SmtpServer.EnableSsl = true;
-            //宣告信件內容物件 
-            MailMessage mail = new MailMessage();
-            //設定來源信箱
-            mail.From = new MailAddress(gmail_mail);
-            //設定收信者信箱
-            mail.To.Add(ToEmail);
-            //設定信件主旨 
-            mail.Subject = subject ? "會員確認信" : "忘記密碼確認信";
-            //設定信件內容
-            mail.Body = MailBody;
-             //設定信件內容為HTML格式
-            mail.IsBodyHtml = true;
-            //送出信件
-            SmtpServer.Send(mail);
+            try
+            {
+                //建立寄信用Smtp物件，這裡使用Gmail為例
+                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+                //設定使用的Port，這裡設定Gmail所使用的
+                SmtpServer.Port = 587;
+                //建立使用者憑據，這裡要設定您的Gmail帳戶
+                SmtpServer.Credentials = new System.Net.NetworkCredential(gmail_account, gmail_password);
+                //開啟SSL
+                SmtpServer.EnableSsl = true;
+                //宣告信件內容物件 
+                MailMessage mail = new MailMessage();
+                //設定來源信箱
+                mail.From = new MailAddress(gmail_mail);
+                //設定收信者信箱
+                mail.To.Add(ToEmail);
+                //設定信件主旨 
+                mail.Subject = subject ? "會員確認信" : "忘記密碼確認信";
+                //設定信件內容
+                mail.Body = MailBody;
+                //設定信件內容為HTML格式
+                mail.IsBodyHtml = true;
+                //送出信件
+                SmtpServer.Send(mail);
+            }
+             catch (DbUpdateException e)
+            {
+                throw new DbUpdateException(e.Message.ToString());
+            }
+           
         }
         #endregion
     }
