@@ -138,6 +138,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         #region 修改會員
         // Delete: api/Members/Edit/{Account}
         [HttpPut("Edit/{Account}")]
+
         public async Task<ActionResult> EditMember(string Account, EditResources EditData)
         {
             try

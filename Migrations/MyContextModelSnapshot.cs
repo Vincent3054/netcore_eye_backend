@@ -48,7 +48,7 @@ namespace project.Migrations
                         new
                         {
                             A_Id = "1",
-                            AnalysisTime = new DateTime(2020, 8, 11, 10, 40, 17, 308, DateTimeKind.Local).AddTicks(4981),
+                            AnalysisTime = new DateTime(2020, 8, 11, 19, 30, 55, 584, DateTimeKind.Local).AddTicks(1180),
                             B_Id = "1",
                             Image = "https://i.imgur.com/PuC21Ma.png",
                             M_Id = "1"
@@ -105,7 +105,7 @@ namespace project.Migrations
                         {
                             B_Id = "1",
                             RawImage = "https://i.imgur.com/cfeJ9j7.png",
-                            RawTime = new DateTime(2020, 8, 11, 10, 40, 17, 310, DateTimeKind.Local).AddTicks(8539)
+                            RawTime = new DateTime(2020, 8, 11, 19, 30, 55, 586, DateTimeKind.Local).AddTicks(4229)
                         });
                 });
 
@@ -175,8 +175,8 @@ namespace project.Migrations
                             M_Id = "1",
                             Account = "admin001",
                             AuthCode = "",
-                            BirthDate = new DateTime(2020, 8, 11, 10, 40, 17, 296, DateTimeKind.Local).AddTicks(377),
-                            CreateTime = new DateTime(2020, 8, 11, 10, 40, 17, 298, DateTimeKind.Local).AddTicks(6566),
+                            BirthDate = new DateTime(2020, 8, 11, 19, 30, 55, 574, DateTimeKind.Local).AddTicks(2348),
+                            CreateTime = new DateTime(2020, 8, 11, 19, 30, 55, 575, DateTimeKind.Local).AddTicks(757),
                             Email = "ok96305@gmail.com",
                             Name = "陳建成",
                             Password = "12345",
