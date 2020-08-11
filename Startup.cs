@@ -36,7 +36,6 @@ namespace project
         //設定差件
         public void ConfigureServices(IServiceCollection services)
         {
-            
             //跨域設定
             services.AddCors(option =>
             option.AddPolicy("AnotherPolicy", builder =>
@@ -45,8 +44,8 @@ namespace project
                        .AllowAnyHeader()/*設定允許所有作者要求標頭*/
                        .AllowAnyMethod();/*設定允許任何 HTTP(Get、post...) */
             }));
+
             //JWT設定   
-            // STEP1: 設定用哪種方式驗證 HTTP Request 是否合法
             services
                 // 檢查 HTTP Header 的 Authorization 是否有 JWT Bearer Token
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -57,16 +56,12 @@ namespace project
                     options.IncludeErrorDetails = true; // 預設值為 true，有時會特別關閉
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        // 透過這項宣告，就可以從 "sub" 取值並設定給 User.Identity.Name
-                        // NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
-                        // 透過這項宣告，就可以從 "roles" 取值，並可讓 [Authorize] 判斷角色
-                        // RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
                         // 一般我們都會驗證 Issuer
                         ValidateIssuer = true, //發行者驗證
                         ValidIssuer = Configuration.GetValue<string>("JwtSettings:Issuer"),
                         // 通常不太需要驗證 Audience
                         ValidateAudience = true,//接收者驗證
-                        ValidAudience = "JwtAuthDemo", // 不驗證就不需要填寫
+                        ValidAudience = Configuration.GetValue<string>("JwtSettings:Issuer"), // 不驗證就不需要填寫
                         // 一般我們都會驗證 Token 的有效期間
                         ValidateLifetime = true, //存活時間驗證
                         // 如果 Token 中包含 key 才需要驗證，一般都只有簽章而已
@@ -74,24 +69,28 @@ namespace project
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SignKey"]))
                     };
                 });
+
             //引入Controllers回傳格式為json檔
             services.AddControllers().AddNewtonsoftJson(
                 options =>
                 {
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 }
-            ); //AddControllers
+            ); 
+            
+            //AddControllers
             services.AddDbContext<MyContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+
             //用來接前端的資料 mvc之前自動寫好了 這邊要設定
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<JwtHelpers>();
 
             //自動產生API文件的差件
             services.AddSwaggerGen();
-            //在研究
+            //AutoMap
             services.AddAutoMapper(typeof(Startup));
         }
         //啟用差件(按照正確的順序)
@@ -103,17 +102,17 @@ namespace project
             {
                 app.UseDeveloperExceptionPage();
             }
-            //跨域
-            app.UseCors("AnotherPolicy");
-            //建立資料庫的連接
-            dbContext.Database.EnsureCreated();
+            
+            app.UseCors("AnotherPolicy");//跨域
+        
+            dbContext.Database.EnsureCreated();//建立資料庫的連接
+
             app.UseHttpsRedirection();//HTTP導向HTTPS
-            //ROUT的東西
-            app.UseRouting();
             
+            app.UseRouting();//ROUT的東西
             
-            // STEP2: 使用驗證權限的 Middleware
-            //app.UseAuthentication();//先驗證
+            app.UseAuthentication();//先驗證
+
             app.UseAuthorization();//再授權
             
             //Swagger

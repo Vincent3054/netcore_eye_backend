@@ -47,7 +47,7 @@ namespace Utils
 
             // 你可以自行擴充 "roles" 加入登入者該有的角色
             claims.Add(new Claim("roles", "Admin"));
-            //claims.Add(new Claim("roles", "Users"));
+            claims.Add(new Claim("roles", "Users"));
 
             var userClaimsIdentity = new ClaimsIdentity(claims);
 
@@ -62,7 +62,7 @@ namespace Utils
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = issuer,
-                //Audience = issuer, // 由於你的 API 受眾通常沒有區分特別對象，因此通常不太需要設定，也不太需要驗證
+                Audience = issuer, // 由於你的 API 受眾通常沒有區分特別對象，因此通常不太需要設定，也不太需要驗證
                 //NotBefore = DateTime.Now, // 預設值就是 DateTime.Now
                 //IssuedAt = DateTime.Now, // 預設值就是 DateTime.Now
                 Subject = userClaimsIdentity,
@@ -73,7 +73,7 @@ namespace Utils
             // 產出所需要的 JWT securityToken 物件，並取得序列化後的 Token 結果(字串格式)
             var tokenHandler = new JwtSecurityTokenHandler();
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-            var serializeToken = tokenHandler.WriteToken(securityToken);
+            var serializeToken = "Bearer "+tokenHandler.WriteToken(securityToken);
 
             return serializeToken;
         }

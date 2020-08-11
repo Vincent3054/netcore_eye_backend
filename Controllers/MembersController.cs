@@ -69,7 +69,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             }
             else
             {
-                return BadRequest(new { nessage = "帳號已被註冊" }); //400
+                return BadRequest(new { nessage = "登入失敗" }); //400
             }
         }
         #endregion

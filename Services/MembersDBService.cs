@@ -24,13 +24,13 @@ namespace project.Services
         public MembersDBService(IMapper mapper, MyContext DBContext)
         {
             this._mapper = mapper;
-            this._DBContext = DBContext  ;
+            this._DBContext = DBContext;
         }
 
         #region 註冊會員
         public async Task<bool> RegisterAsync(RegisterResources newRegister) //回傳值 <bool>
         {
-            var userDTO = this._mapper.Map<RegisterResources,UserModel>(newRegister);//AutoMap<來源,欲修改>(來源)連到Profile檔的設置
+            var userDTO = this._mapper.Map<RegisterResources, UserModel>(newRegister);//AutoMap<來源,欲修改>(來源)連到Profile檔的設置
             //根據帳號去查會員資料
             // UserModel Member = await GetMemberByAccountAsync(userDTO.Account);
             //判斷此帳號使否已被註冊
@@ -65,7 +65,7 @@ namespace project.Services
             //根據帳號去查會員資料
             UserModel Member = await GetMemberByAccountAsync(userDTO.Account);
             //判斷是否有此帳號
-            if (Member.Account != null)//如果有這個帳號
+            if (Member != null)//如果有這個帳號
             {
                 //進行密碼確認
                 if (Member.Password.Equals(HashPassword(userDTO.Password)))
@@ -105,12 +105,12 @@ namespace project.Services
         {
             try
             {
-                List<UserModel>  Member=  await this._DBContext.User.ToListAsync();
-               
+                List<UserModel> Member = await this._DBContext.User.ToListAsync();
+
                 var userDTO = this._mapper.Map<List<UserModel>, List<MembersAllResources>>(Member);
 
 
-                return  userDTO; //查全部
+                return userDTO; //查全部
             }
             catch (DbUpdateException e)
             {
@@ -120,7 +120,7 @@ namespace project.Services
         #endregion
 
         #region 修改會員
-        public async Task<bool> EditMemberAsync(EditResources newEdit,string Account)
+        public async Task<bool> EditMemberAsync(EditResources newEdit, string Account)
         {
             try
             {
@@ -238,10 +238,10 @@ namespace project.Services
         }
         #endregion
         // #region 確認帳號是否已被使用
-        // public async Task<bool> AccountCheck(string Account)
-        // {
-        //     UserModel Data = await GetMemberByAccount(Account);
-        //     return (Data == null);
+        //  public async Task<bool> AccountCheck(string Account)
+        //  {
+        //      UserModel Data = await GetMemberByAccountAsync(Account);
+        //      return (Data == null);
         // }
         // #endregion
 
