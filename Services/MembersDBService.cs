@@ -105,12 +105,9 @@ namespace project.Services
         {
             try
             {
-                List<UserModel> Member = await this._DBContext.User.ToListAsync();
-
+                List<UserModel> Member = await this._DBContext.User.ToListAsync();//查全部
                 var userDTO = this._mapper.Map<List<UserModel>, List<MembersAllResources>>(Member);
-
-
-                return userDTO; //查全部
+                return userDTO; 
             }
             catch (DbUpdateException e)
             {

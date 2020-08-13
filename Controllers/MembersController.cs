@@ -51,11 +51,11 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             //controller越乾淨越好，把AutoMap移到Service
             if (await this._MembersDBService.RegisterAsync(RegisterData))//呼叫function到Service並把原始資料傳過去
             {
-                return Ok("註冊成功"); //200
+                return Ok(new Result(true, 200, "註冊成功"));
             }
             else
             {
-                return BadRequest("帳號已被註冊"); //400
+                return BadRequest(new Result(false, 400, "帳號已被註冊"));
             }
         }
         #endregion
@@ -67,11 +67,12 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         {
             if (await this._MembersDBService.LoginCheckAsync(LoginData)) //*沒有查到帳號會出現問題
             {
-                return Ok(this._jwt.GenerateToken(LoginData.Account));
+                LoginData.Token = this._jwt.GenerateToken(LoginData.Account);
+                return Ok(new Result<LoginResources>(true, 200, "登入成功", null, LoginData));
             }
             else
             {
-                return BadRequest(new { nessage = "登入失敗" }); //400
+                return BadRequest(new Result(false, 400, "登入失敗"));
             }
         }
         #endregion
@@ -83,11 +84,12 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         {
             try
             {
-                return Ok(await this._MembersDBService.GetMemberAsync());
+                List<MembersAllResources> Data = await this._MembersDBService.GetMemberAsync();
+                return Ok(new ResultList<MembersAllResources>(true, 200, "查詢成功", null, Data));
             }
             catch
             {
-                return NotFound("查詢失敗"); //400
+                return NotFound(new Result(false, 404, "查詢失敗")); //400
             }
         }
         #endregion
@@ -95,24 +97,24 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         #region 顯示單筆會員資料
         // GET: api/Members/Single/{Account}
         [HttpGet("Single/{Account}")]
+        [Authorize]
         public async Task<ActionResult> GetSingleMembers(string Account)
         {
             try
             {
                 UserModel GetMembersData = await this._MembersDBService.GetMemberByAccountAsync(Account);
                 var userDTO = this._mapper.Map<UserModel, MembersAllResources>(GetMembersData);
-                return Ok(userDTO);
+                return Ok(new Result<MembersAllResources>(true, 200, "查詢成功", null, userDTO));
             }
             catch
             {
-                return NotFound("查詢失敗"); //400
+                return NotFound(new Result(false, 404, "查詢失敗"));
             }
         }
         #endregion
 
         #region 刪除會員
         // Delete: api/Members/Delete/{Account}
-        [Authorize]
         [HttpDelete("Delete/{Account}")]
         public async Task<ActionResult> DeleteMember(string Account)
         {
@@ -120,16 +122,16 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             {
                 if (await this._MembersDBService.DeleteMemberAsync(Account))
                 {
-                    return Ok("刪除成功");
+                    return Ok(new Result(true, 200, "刪除成功"));
                 }
                 else
                 {
-                    return BadRequest("沒有此帳號");
+                    return BadRequest(new Result(false, 400, "帳號不存在"));
                 }
             }
             catch
             {
-                return NotFound("發生錯誤");
+                return NotFound(new Result(false, 404, "發生錯誤"));
             }
 
         }
@@ -145,16 +147,16 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             {
                 if (await this._MembersDBService.EditMemberAsync(EditData, Account))
                 {
-                    return Ok("修改成功");
+                    return Ok(new Result(true, 200, "修改成功"));
                 }
                 else
                 {
-                    return BadRequest("沒有此帳號");
+                    return BadRequest(new Result(false, 400, "帳號不存在"));
                 }
             }
             catch
             {
-                return NotFound("發生錯誤");
+                return NotFound(new Result(false, 404, "發生錯誤"));
             }
 
         }
@@ -190,18 +192,18 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
                     string MailBody = this._MailService.GetRegisterMailBody(TempMail, FPDate.Account, Path, AuthCode);
                     //寄送驗證信
                     this._MailService.SendRegisterMail(MailBody, FPDate.Email, false);
-                    return Ok("請去收驗證信重設密碼");
+                    return Ok(new Result(true, 200, "請去收驗證信，並重設密碼"));
                 }
                 else
                 {
                     FPDate.Account = null;
                     FPDate.Email = null;
-                    return BadRequest("此帳號尚未註冊");
+                    return BadRequest(new Result(false, 400, "此帳號尚未註冊"));
                 }
             }
-            catch (DbUpdateException e)
+            catch
             {
-                throw new DbUpdateException(e.Message.ToString());
+                return NotFound(new Result(false, 404, "發生錯誤"));
             }
         }
 
@@ -215,16 +217,16 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
                 string ValidateStr = await this._MembersDBService.EmailValidate(EVData.Account, EVData.AuthCode);
                 if (String.IsNullOrWhiteSpace(ValidateStr))
                 {
-                    return Ok("驗證成功");
+                    return Ok(new Result(true, 200, "驗證成功"));
                 }
                 else
                 {
-                    return BadRequest(ValidateStr);
+                    return BadRequest(new Result(false, 400, ValidateStr));
                 }
             }
-            catch (Exception)
+            catch
             {
-                return BadRequest("驗證失敗");
+                return NotFound(new Result(false, 404, "驗證失敗"));
             }
         }
 
@@ -238,19 +240,18 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
                 string DateStr = await this._MembersDBService.ResetPassword(RPData.Account, RPData.AuthCode, RPData.NewPassword, RPData.NewPasswordCheck);
                 if (String.IsNullOrWhiteSpace(DateStr))
                 {
-                    return Ok("重設密碼成功");
+                    return Ok(new Result(true, 200, "重設密碼成功"));
                 }
                 else
                 {
-                    return BadRequest(DateStr);
+                    return BadRequest(new Result(false, 400, DateStr));
                 }
             }
-            catch (Exception)
+            catch
             {
-                return BadRequest("發生錯誤");
+                return NotFound(new Result(false, 404, "發生錯誤"));
             }
         }
-
 
         #endregion
     }
