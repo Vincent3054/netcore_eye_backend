@@ -42,8 +42,14 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             this._MailService = new MailService();
         }
         #endregion
-
+       
+       
         #region 註冊
+        /// <summary>
+        /// 註冊
+        /// </summary>
+        /// <param name="RegisterData">admin003</param>
+        /// <returns>註冊</returns>
         // POST: api/Members/Register
         [HttpPost("Register")] //http協定 
         public async Task<ActionResult> Register([FromBody] RegisterResources RegisterData) //同步異步寫法 註3，Webapi裡面的ViewModel是Resources 註4
@@ -78,6 +84,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         #endregion
 
         #region 顯示會員資料列
+        
         // GET: api/Members/All
         [HttpGet("All")]
         public async Task<ActionResult> GetMembers()
@@ -93,11 +100,15 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             }
         }
         #endregion
-
+        
         #region 顯示單筆會員資料
+        /// <summary>
+        /// 顯示單筆會員資料
+        /// </summary>
+        /// <param name="Account">admin001</param>
+        /// <returns>顯示單筆會員資料</returns>
         // GET: api/Members/Single/{Account}
         [HttpGet("Single/{Account}")]
-        [Authorize]
         public async Task<ActionResult> GetSingleMembers(string Account)
         {
             try
@@ -112,7 +123,6 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             }
         }
         #endregion
-
         #region 刪除會員
         // Delete: api/Members/Delete/{Account}
         [HttpDelete("Delete/{Account}")]
