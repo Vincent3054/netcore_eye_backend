@@ -363,5 +363,6 @@ namespace project.Services
     3.產生ID
         user.Id = _users.Count() == 0 ? 1 : _users.Max(c => c.Id) + 1; 產生M_Id
         newUser.M_Id=_DBContext.User.Count()==0?1:_DBContext.User.Max(c=>c.M_Id)+1; 目前是字串不能用max 還有+1
+        12313
 */
 #endregion
