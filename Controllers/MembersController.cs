@@ -42,8 +42,11 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             this._MailService = new MailService();
         }
         #endregion
-
+       
         #region 註冊
+        /// <summary>
+        /// 註冊
+        /// </summary>
         // POST: api/Members/Register
         [HttpPost("Register")] //http協定 
         public async Task<ActionResult> Register([FromBody] RegisterResources RegisterData) //同步異步寫法 註3，Webapi裡面的ViewModel是Resources 註4
@@ -61,6 +64,9 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         #endregion
 
         #region 登入
+        /// <summary>
+        /// 登入
+        /// </summary>
         // POST: api/Members/Login
         [HttpPost("Login")]
         public async Task<ActionResult> Login([FromBody] LoginResources LoginData) //同步異步寫法 註3 ，Webapi裡面的ViewModel是Resources 註4
@@ -78,6 +84,9 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         #endregion
 
         #region 顯示會員資料列
+        /// <summary>
+        /// 顯示會員資料列
+        /// </summary>
         // GET: api/Members/All
         [HttpGet("All")]
         public async Task<ActionResult> GetMembers()
@@ -93,11 +102,13 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             }
         }
         #endregion
-
+        
         #region 顯示單筆會員資料
+        /// <summary>
+        /// 顯示單筆會員資料
+        /// </summary>
         // GET: api/Members/Single/{Account}
         [HttpGet("Single/{Account}")]
-        [Authorize]
         public async Task<ActionResult> GetSingleMembers(string Account)
         {
             try
@@ -112,8 +123,10 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             }
         }
         #endregion
-
         #region 刪除會員
+        /// <summary>
+        /// 刪除會員
+        /// </summary>
         // Delete: api/Members/Delete/{Account}
         [HttpDelete("Delete/{Account}")]
         public async Task<ActionResult> DeleteMember(string Account)
@@ -138,6 +151,9 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         #endregion
 
         #region 修改會員
+        /// <summary>
+        /// 修改會員
+        /// </summary>
         // Delete: api/Members/Edit/{Account}
         [HttpPut("Edit/{Account}")]
 
@@ -170,7 +186,11 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         */
 
         // 忘記密碼
+        /// <summary>
+        /// 忘記密碼
+        /// </summary>
         [HttpPut("ResetPassword1")]
+        // Delete: api/Members/ResetPassword1
         public async Task<ActionResult> FrogetPassword(FrogetPasswordResources FPDate)
         {
             try
@@ -207,9 +227,12 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             }
         }
 
-
         // 接收驗證信
+        /// <summary>
+        /// 接收驗證信
+        /// </summary>
         [HttpPut("ResetPassword2")]
+        // Delete: api/Members/ResetPassword2
         public async Task<ActionResult> EmailVaildate(EmailVaildateResources EVData)
         {
             try
@@ -232,7 +255,11 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
 
 
         // 重設密碼
+        /// <summary>
+        /// 重設密碼
+        /// </summary>
         [HttpPut("ResetPassword3")]
+        // Delete: api/Members/ResetPassword3
         public async Task<ActionResult> ResetPassword(ResetPasswordResources RPData)
         {
             try
