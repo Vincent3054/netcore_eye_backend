@@ -70,7 +70,7 @@ namespace project.Services
                 //進行密碼確認
                 if (Member.Password.Equals(HashPassword(userDTO.Password)))
                 {
-                    return true;
+                    return true; 
                 }
                 else
                 {
