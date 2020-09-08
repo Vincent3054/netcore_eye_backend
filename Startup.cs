@@ -36,6 +36,8 @@ namespace project
         //設定差件
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            
             //跨域設定
             services.AddCors(option =>
             option.AddPolicy("AnotherPolicy", builder =>
@@ -78,7 +80,7 @@ namespace project
                 }
             ); 
             
-            //AddControllers
+            //AddDbContext
             services.AddDbContext<MyContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
