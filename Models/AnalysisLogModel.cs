@@ -6,22 +6,30 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Models
 {
     public class AnalysisLogModel
-    {
+    {   
+        //分析資料編號(主鍵)
+        [Key]
+        [Required]
         [Column(TypeName = "varchar(50)")]
-        public string A_Id { get; set; }
+        public string A_ID { get; set; }
         
-        [ForeignKey("UserModel")]
-        public string M_Id { get; set; }
-        [ForeignKey("BeforeAnalysisLogModel")]
-        public string B_Id { get; set; }
-        [Column(TypeName = "NvarChar(Max)")]
-        public string Image { get; set; }
-        
-        [Column(TypeName = "datetime")]
-        public DateTime AnalysisTime { get; set; }
+        //會員編號(外來鍵)
+        [ForeignKey("MemberModel")]
+        public string M_ID { get; set; }
 
-        public virtual UserModel TheUser  { get; set;}
-        public virtual BeforeAnalysisLogModel TheBeforeAnalysisLogModel  { get; set;}
+        //圖片檔名
+        [Column(TypeName = "nvarChar(30)")]
+        public string Image_Name { get; set; }
+        
+        //圖片路徑
+        [Column(TypeName = "varChar(Max)")]
+        public string Image_Location { get; set; }
+        
+        //建立時間
+        [Column(TypeName = "datetime")]
+        public DateTime UpdateTime { get; set; }
+
+        public virtual MemberModel TheMember { get; set;}
         public virtual ICollection<AnalysisStatusModel> AnalysisStatus { get; set; } 
     }
 }

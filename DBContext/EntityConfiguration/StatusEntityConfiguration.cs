@@ -7,10 +7,10 @@ namespace DBContext.EntityConfiguration
     {
         public void Configure(EntityTypeBuilder<StatusModel> builder)
         {
-            builder.HasKey(p => p.S_Id); //主鍵
+            builder.HasKey(p => p.S_ID); //主鍵
         
             builder.HasData( //Seed Data
-                new StatusModel { S_Id = "1", StatusName="坐姿警示",Message="坐姿過於前傾"}
+                new StatusModel { S_ID = "84d90208-6244-4b83-a714-1baebf96eaa5", StatusName="坐姿警示",StatusMessage="坐姿過於前傾"}
             );
         }
     }

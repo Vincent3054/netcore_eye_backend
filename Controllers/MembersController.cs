@@ -113,9 +113,9 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         {
             try
             {
-                UserModel GetMembersData = await this._MembersDBService.GetMemberByAccountAsync(Account);
-                var userDTO = this._mapper.Map<UserModel, MembersAllResources>(GetMembersData);
-                return Ok(new Result<MembersAllResources>(true, 200, "查詢成功", null, userDTO));
+                MemberModel GetMembersData = await this._MembersDBService.GetMemberByAccountAsync(Account);
+                var memberDTO = this._mapper.Map<MemberModel, MembersAllResources>(GetMembersData);
+                return Ok(new Result<MembersAllResources>(true, 200, "查詢成功", null, memberDTO));
             }
             catch
             {

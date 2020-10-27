@@ -30,18 +30,18 @@ namespace project.Services
         #region 註冊會員
         public async Task<bool> RegisterAsync(RegisterResources newRegister) //回傳值 <bool>
         {
-            var userDTO = this._mapper.Map<RegisterResources, UserModel>(newRegister);//AutoMap<來源,欲修改>(來源)連到Profile檔的設置
+            var memberDTO = this._mapper.Map<RegisterResources, MemberModel>(newRegister);//AutoMap<來源,欲修改>(來源)連到Profile檔的設置
             //根據帳號去查會員資料
-            // UserModel Member = await GetMemberByAccountAsync(userDTO.Account);
+            // MemberModel Member = await GetMemberByAccountAsync(memberDTO.Account);
             //判斷此帳號使否已被註冊
-            if (await GetMemberByAccountAsync(userDTO.Account) == null)//如果沒有這個號資料
+            if (await GetMemberByAccountAsync(memberDTO.Account) == null)//如果沒有這個號資料
             {
                 try
                 {
-                    userDTO.M_Id = await GetGUIDAsync();
-                    userDTO.Password = HashPassword(userDTO.Password);//密碼 hash
-                    userDTO.CreateTime = DateTime.Now;//產生帳號建立時間
-                    await this._DBContext.User.AddAsync(userDTO);
+                    memberDTO.M_ID = await GetGUIDAsync();
+                    memberDTO.Password = HashPassword(memberDTO.Password);//密碼 hash
+                    memberDTO.CreateTime = DateTime.Now;//產生帳號建立時間
+                    await this._DBContext.Member.AddAsync(memberDTO);
                     await this._DBContext.SaveChangesAsync();
                     return true;
                 }
@@ -61,14 +61,14 @@ namespace project.Services
         #region 登入
         public async Task<bool> LoginCheckAsync(LoginResources newLogin)
         {
-            var userDTO = this._mapper.Map<LoginResources, UserModel>(newLogin);
+            var memberDTO = this._mapper.Map<LoginResources, MemberModel>(newLogin);
             //根據帳號去查會員資料
-            UserModel Member = await GetMemberByAccountAsync(userDTO.Account);
+            MemberModel Member = await GetMemberByAccountAsync(memberDTO.Account);
             //判斷是否有此帳號
             if (Member != null)//如果有這個帳號
             {
                 //進行密碼確認
-                if (Member.Password.Equals(HashPassword(userDTO.Password)))
+                if (Member.Password.Equals(HashPassword(memberDTO.Password)))
                 {
                     return true; 
                 }
@@ -85,11 +85,11 @@ namespace project.Services
         #endregion
 
         #region 藉由帳號取得單筆會員資料
-        public async Task<UserModel> GetMemberByAccountAsync(string Account)
+        public async Task<MemberModel> GetMemberByAccountAsync(string Account)
         {
             try
             {
-                return await this._DBContext.User
+                return await this._DBContext.Member
                                  .Where(b => b.Account == Account)
                                  .FirstOrDefaultAsync(); //只抓第一筆(會補空值)
             }
@@ -101,13 +101,13 @@ namespace project.Services
         #endregion
 
         #region 取得所有會員資料
-        public async Task<List<MembersAllResources>> GetMemberAsync()//回傳多個List(用UserModel型態)
+        public async Task<List<MembersAllResources>> GetMemberAsync()//回傳多個List(用MemberModel型態)
         {
             try
             {
-                List<UserModel> Member = await this._DBContext.User.ToListAsync();//查全部
-                var userDTO = this._mapper.Map<List<UserModel>, List<MembersAllResources>>(Member);
-                return userDTO; 
+                List<MemberModel> Member = await this._DBContext.Member.ToListAsync();//查全部
+                var memberDTO = this._mapper.Map<List<MemberModel>, List<MembersAllResources>>(Member);
+                return memberDTO; 
             }
             catch (DbUpdateException e)
             {
@@ -121,9 +121,9 @@ namespace project.Services
         {
             try
             {
-                var oriUser = this._DBContext.User.Single(x => x.Account == Account);
+                var oriUser = this._DBContext.Member.Single(x => x.Account == Account);
                 _DBContext.Entry(oriUser).CurrentValues.SetValues(newEdit);
-                // UserModel editdata = await this._DBContext.User.Where(p => p.Account == Account).FirstAsync();
+                // MemberModel editdata = await this._DBContext.Member.Where(p => p.Account == Account).FirstAsync();
                 // this._DBContext.Update(editdata);
                 //this._DBContext.Update(newEdit);
                 await this._DBContext.SaveChangesAsync();
@@ -143,10 +143,10 @@ namespace project.Services
             {
                 try
                 {
-                    UserModel User = await this._DBContext.User
+                    MemberModel Member = await this._DBContext.Member
                                 .Where(b => b.Account == Account)
                                 .FirstOrDefaultAsync();
-                    this._DBContext.Remove(User);
+                    this._DBContext.Remove(Member);
                     await this._DBContext.SaveChangesAsync();
                     return true;
                 }
@@ -189,14 +189,14 @@ namespace project.Services
         {
             try
             {
-                UserModel Member = new UserModel();
+                MemberModel Member = new MemberModel();
                 String checkGuid;
                 do// 產生沒有重複使用的GUID
                 {
                     Guid Id = Guid.NewGuid();
                     checkGuid = Id.ToString();
-                    Member = await this._DBContext.User
-                                 .Where(b => b.M_Id == checkGuid)
+                    Member = await this._DBContext.Member
+                                 .Where(b => b.M_ID == checkGuid)
                                  .FirstOrDefaultAsync();
                 } while (Member != null);
                 return checkGuid;
@@ -211,12 +211,12 @@ namespace project.Services
         #region 忘記密碼
         public async Task<bool> ForgetPasswordCheckAsync(string Account, string AuthCode)
         {
-            UserModel Member = await GetMemberByAccountAsync(Account);//判斷是否有此帳號
+            MemberModel Member = await GetMemberByAccountAsync(Account);//判斷是否有此帳號
             if (Member != null)//如果有這個帳號
             {
                 try
                 {
-                    var oriUser = this._DBContext.User.Single(x => x.Account == Account);
+                    var oriUser = this._DBContext.Member.Single(x => x.Account == Account);
                     oriUser.AuthCode = AuthCode;//把驗證碼傳入這個會員的資料裡
                     await this._DBContext.SaveChangesAsync();
                     return true;
@@ -236,7 +236,7 @@ namespace project.Services
         public async Task<string> EmailValidate(string Account, string AuthCode)
         {
             string ValidateStr = string.Empty; //宣告空字串    
-            UserModel ValidateMember = await GetMemberByAccountAsync(Account);//根據帳號去查會員資料
+            MemberModel ValidateMember = await GetMemberByAccountAsync(Account);//根據帳號去查會員資料
             if (ValidateMember != null)//如果有這個帳號
             {
                 if (ValidateMember.AuthCode == AuthCode)//判斷傳入驗證碼與資料庫中是否相同
@@ -264,12 +264,12 @@ namespace project.Services
             if (NewPassword == NewPasswordCheck)//確認密碼相同
             {
                 NewPassword = HashPassword(NewPassword);//hash新密碼
-                UserModel Data = await GetMemberByAccountAsync(Account);//根據帳號去查會員資料
+                MemberModel Data = await GetMemberByAccountAsync(Account);//根據帳號去查會員資料
                 if (AuthCode == Data.AuthCode)//確認驗證碼
                 {
                     try
                     {
-                        var oriUser = this._DBContext.User.Single(x => x.Account == Account);
+                        var oriUser = this._DBContext.Member.Single(x => x.Account == Account);
                         oriUser.AuthCode = string.Empty;//把驗證碼欄位改為空字串(代表這個帳號沒有通過驗證)
                         oriUser.Password = NewPassword;//修改新密碼
                         await this._DBContext.SaveChangesAsync();
@@ -297,13 +297,13 @@ namespace project.Services
         // #region 確認帳號是否已被使用
         //  public async Task<bool> AccountCheck(string Account)
         //  {
-        //      UserModel Data = await GetMemberByAccountAsync(Account);
+        //      MemberModel Data = await GetMemberByAccountAsync(Account);
         //      return (Data == null);
         // }
         // #endregion
 
         // #region 確認密碼是否正確
-        // public bool PasswordCheck(UserModel CheckMember, string Password)
+        // public bool PasswordCheck(MemberModel CheckMember, string Password)
         // {
         //     bool result = CheckMember.Equals(HashPassword(Password));
         //     return result;
@@ -319,13 +319,13 @@ namespace project.Services
     Async 意思是 等這段執行完才會執行下段 建議有SQL的地方都要用
 
     資料庫要用ORM的寫法 (和LINEQ)
-    新增 await this._DBContext.User.AddAsync(newUser);
-    修改 await this._DBContext.User.Update(newUser);
-    刪除 await this._DBContext.User.Remove(newUser);
-    查詢 await this._DBContext.User.ToListAsync();
+    新增 await this._DBContext.Member.AddAsync(newMember);
+    修改 await this._DBContext.Member.Update(newMember);
+    刪除 await this._DBContext.Member.Remove(newMember);
+    查詢 await this._DBContext.Member.ToListAsync();
 
     查詢單筆 (箭頭寫法)
-    await this._DBContext.User.Where(b => b.Account == Account)
+    await this._DBContext.Member.Where(b => b.Account == Account)
     .ToList();  (印出List資料)     .First (選取第一筆資料)
 
     //ORM 篩選
@@ -335,7 +335,7 @@ namespace project.Services
 */
 /* 參考程式碼
     1.非ORM寫法(註冊)
-    public void Register(UserViewModel newMember)
+    public void Register(MemberViewModel newMember)
     {
         string sql = $@" INSERT INTO Members (Email,Passsword, Name,Role) VALUES ('{newMember.Email}','{newMember.Passsword}','{newMember.Name}','0') ";
             try
@@ -354,10 +354,10 @@ namespace project.Services
             }    
     }        
     2.帶值傳入MODEL
-    public async Task AddUser(string url)
+    public async Task AddMember(string url)
     {
-        var User = new UserModel { Name = url };
-        await _DBContext.User.AddAsync(User);
+        var Member = new MemberModel { Name = url };
+        await _DBContext.Member.AddAsync(Member);
         await _DBContext.SaveChangesAsync();       
     }
     3.產生ID
