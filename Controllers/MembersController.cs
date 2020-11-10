@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using DBContext;
+using HttpClientFactorySample.GitHub;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +34,9 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         private readonly MailService _MailService;
         private readonly IWebHostEnvironment _env; //註6 取得網站根目錄功能
 
-        public MembersController(IMapper mapper, MyContext DBContext, JwtHelpers jwt, IWebHostEnvironment env) //建構子
+        private readonly IHttpClientFactory _clientFactory; //在 ASP.NET Core 中使用 IHttpClientFactory 發出 HTTP 要求
+
+        public MembersController(IMapper mapper, MyContext DBContext, JwtHelpers jwt, IWebHostEnvironment env, IHttpClientFactory clientFactory) //建構子
         {
             this._mapper = mapper;
             this._DBContext = DBContext;
@@ -40,9 +45,40 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             //Service建議用DI注入的方式 但因為本系統架構不大所以先用new的方式 註2
             this._MembersDBService = new MembersDBService(_mapper, _DBContext);
             this._MailService = new MailService();
+            _clientFactory = clientFactory;//在 ASP.NET Core 中使用 IHttpClientFactory 發出 HTTP 要求
+
         }
         #endregion
-       
+
+        /* call api測試
+        public IEnumerable<GitHubBranch> Branches { get; private set; }
+
+        public bool GetBranchesError { get; private set; }
+        public async Task OnGet()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                "https://api.github.com/repos/aspnet/docs/branches");
+            request.Headers.Add("Accept", "application/vnd.github.v3+json");
+            request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+
+            var client = _clientFactory.CreateClient();
+
+            var response = await client.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+               Branches =await JsonSerializer.DeserializeAsync<IEnumerable<GitHubBranch>>(await response.Content.ReadAsStreamAsync());
+            }
+            else
+            {
+                GetBranchesError = true;
+                Branches = Array.Empty<GitHubBranch>();
+            }
+
+        }
+        */
+
+
+
         #region 註冊
         /// <summary>
         /// 註冊
@@ -93,6 +129,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
         {
             try
             {
+                //await OnGet();//在 ASP.NET Core 中使用 IHttpClientFactory 發出 HTTP 要求
                 List<MembersAllResources> Data = await this._MembersDBService.GetMemberAsync();
                 return Ok(new ResultList<MembersAllResources>(true, 200, "查詢成功", null, Data));
             }
@@ -102,7 +139,7 @@ namespace project.Controllers //用namespace包起來 project(檔名.現在的�
             }
         }
         #endregion
-        
+
         #region 顯示單筆會員資料
         /// <summary>
         /// 顯示單筆會員資料

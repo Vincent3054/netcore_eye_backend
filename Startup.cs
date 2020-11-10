@@ -103,6 +103,8 @@ namespace project
             });            
             //AutoMap
             services.AddAutoMapper(typeof(Startup));
+            //在 ASP.NET Core 中使用 IHttpClientFactory 發出 HTTP 要求
+            services.AddHttpClient();
         }
         //啟用差件(按照正確的順序)
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
